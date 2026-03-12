@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ISKCON Quiz</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Cute Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(160deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            --card-radius: 30px;
+            --primary: #FF9A9E;
+            --white: #ffffff;
+            --gold: #FFD700;
+        }
+
+        body { 
+            background-image: var(--bg-gradient);
+            font-family: 'Fredoka', sans-serif;
+            min-height: 100vh; margin: 0; padding-bottom: 20px;
+            overflow-x: hidden; -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- NAVIGATION --- */
+        .app-navbar {
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .nav-back { 
+            background: white; color: var(--primary); width: 45px; height: 45px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2rem; box-shadow: 0 8px 15px rgba(0,0,0,0.1); cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-back:active { transform: scale(0.9); }
+
+        .nav-title {
+            font-family: 'Nunito', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1); letter-spacing: 1px;
+        }
+        
+        .lang-select {
+            background: white; border: 2px solid white; padding: 5px 12px; border-radius: 20px;
+            color: var(--primary); font-weight: bold; font-family: 'Fredoka'; outline: none;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1); font-size: 0.9rem;
+        }
+
+        /* --- SCREENS --- */
+        .screen { display: none; padding-top: 10px; animation: fadeIn 0.4s; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+        /* --- HOME --- */
+        .slider-container { padding: 10px 15px; }
+        .quiz-carousel {
+            border-radius: var(--card-radius); overflow: hidden; border: 4px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); position: relative;
+        }
+        .carousel-item { height: 240px; cursor: pointer; }
+        .carousel-item img { width: 100%; height: 100%; object-fit: cover; }
+        .carousel-caption { background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding-bottom: 10px; }
+
+        .section-header { 
+            padding: 15px 25px 5px; color: white; font-size: 1.4rem; 
+            font-family: 'Nunito', sans-serif; font-weight: 900; text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 18px 40px; }
+        
+        .q-card {
+            background: white; border-radius: 25px; overflow: hidden; height: 260px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); position: relative;
+            transform-origin: center; animation: floaty 4s ease-in-out infinite; cursor: pointer;
+        }
+        .q-card:nth-child(even) { animation-duration: 5s; animation-delay: 1s; }
+        .q-card:active { transform: scale(0.95); animation: none; }
+        
+        .q-img-box { height: 70%; width: 100%; position: relative; }
+        .q-img { width: 100%; height: 100%; object-fit: cover; }
+        .q-content { height: 30%; padding: 5px 10px; text-align: center; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        
+        .play-btn-float {
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            width: 45px; height: 45px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1rem; box-shadow: 0 5px 15px rgba(255, 154, 158, 0.5);
+        }
+        .q-title { font-size: 1rem; font-weight: 700; color: #444; line-height: 1.1; margin-top: 15px; }
+
+        @keyframes floaty {
+            0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); }
+        }
+
+        /* --- LEVELS --- */
+        .lvl-list { padding: 20px; }
+        .lvl-item {
+            background: white; margin-bottom: 15px; padding: 15px; border-radius: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer;
+        }
+        .lvl-item:active { transform: scale(0.98); }
+        .lvl-name { font-weight: 700; color: #555; font-size: 1.1rem; }
+        .lvl-play { background: #FFD700; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; border:none;}
+
+        /* --- GAME --- */
+        .game-card {
+            background: white; border-radius: 30px; margin: 20px; padding: 30px 20px;
+            min-height: 200px; display: flex; align-items: center; justify-content: center;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            font-size: 1.3rem; font-weight: 600; color: #444; position: relative;
+        }
+        .timer-badge {
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            background: #FFD700; color: white; width: 55px; height: 55px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; font-weight: 900; border: 4px solid white;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+        .opt-btn {
+            background: white; border: none; padding: 15px; border-radius: 20px;
+            font-family: 'Fredoka'; font-weight: 600; color: #555;
+            box-shadow: 0 5px 0 #eee; transition: 0.1s; position: relative;
+        }
+        .opt-btn:active { transform: translateY(5px); box-shadow: none; }
+        .opt-btn.correct { background: #00E676; color: white; box-shadow: 0 5px 0 #00b359; }
+        .opt-btn.wrong { background: #FF5252; color: white; box-shadow: 0 5px 0 #d32f2f; }
+        .opt-btn.hidden { visibility: hidden; }
+
+        .lifelines { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+        .life-btn {
+            width: 50px; height: 50px; border-radius: 50%; border: none;
+            background: white; color: var(--primary); font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer;
+        }
+        .life-btn:disabled { opacity: 0.5; filter: grayscale(1); }
+
+        /* --- RESULT --- */
+        .res-box { text-align: center; margin-top: 50px; color: white; }
+        .trophy { font-size: 80px; color: #FFD700; text-shadow: 0 5px 10px rgba(0,0,0,0.2); animation: floaty 3s infinite; }
+        .score-big { font-size: 3rem; font-weight: 900; margin: 10px 0; }
+        .btn-home {
+            background: white; color: var(--primary); border: none; padding: 12px 30px;
+            border-radius: 30px; font-weight: 700; font-size: 1.2rem; margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Poll Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-card { background: white; padding: 20px; border-radius: 20px; width: 85%; }
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="app-navbar">
+    <div class="nav-back" onclick="goBack()">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="nav-title" id="page-title" data-key="title">Magic Quiz</div>
+    <select id="lang" class="lang-select" onchange="changeLanguage(this.value)">
+        <option value="en">ENG</option>
+        <option value="hi">हिंदी</option>
+        <option value="mr">मराठी</option>
+    </select>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="screen-home" class="screen active">
+    <!-- Slider -->
+    <div class="slider-container" data-aos="zoom-in">
+        <div id="quizCarousel" class="carousel slide quiz-carousel" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active" onclick="loadCategory('levels_gita', 'Bhagavad Gita')">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYz0WRc9wOQDZITO8zdgFs_RoZrTZbaqwunZZTjMDsMVjtM5IvFjg1Ic3g13y-DT9FR19Q4KFQYWrwiUXkURhaN8zE5w4m7akzbnoEeY3VmVyF3uaCYWxDcUfSlpTq3jxvwPqpwPqX3Qrr2Fq1xEVS5sbgea2xkw2gwfl_FQeLMy24leHT_g0tpMRZrm79/s1024/1000098085.png">
+                    <div class="carousel-caption"><h3 class="fw-bold m-0 text-white" style="text-shadow:2px 2px 4px #000" data-key="cat_gita">Bhagavad Gita</h3></div>
+                </div>
+                <div class="carousel-item" onclick="loadCategory('levels_krishna', 'Krishna Leela')">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjC6MgpYsrd8g1IBV2TTQLezkpntu-Bx3gb_7t0A-l-pcacTzGUotyeHOF6NOisKsvFiUrThiYZQ7ZsUZZMcnVGERYT-3OKXtHFHhmGpQgBGYSLw8vZ9LbHDV2zH7Gob9i6jC9NxoPFU-LWc8lWrbrwx8h-HpXVlJKl5qNjA1lNV8zriNxqMVF5fjuHECGi/s1024/1000098088.png" style="object-position: top;">
+                    <div class="carousel-caption"><h3 class="fw-bold m-0 text-white" style="text-shadow:2px 2px 4px #000" data-key="cat_krishna">Krishna</h3></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <i class="fas fa-gamepad"></i> <span data-key="lets_play">Let's Play!</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="quiz-grid">
+        <!-- Gita -->
+        <div class="q-card" onclick="loadCategory('levels_gita', 'Bhagavad Gita')" data-aos="fade-up">
+            <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYz0WRc9wOQDZITO8zdgFs_RoZrTZbaqwunZZTjMDsMVjtM5IvFjg1Ic3g13y-DT9FR19Q4KFQYWrwiUXkURhaN8zE5w4m7akzbnoEeY3VmVyF3uaCYWxDcUfSlpTq3jxvwPqpwPqX3Qrr2Fq1xEVS5sbgea2xkw2gwfl_FQeLMy24leHT_g0tpMRZrm79/s1024/1000098085.png" class="q-img"></div>
+            <div class="q-content">
+                <div class="play-btn-float"><i class="fas fa-play"></i></div>
+                <div class="q-title" data-key="cat_gita">Bhagavad Gita</div>
+            </div>
+        </div>
+
+        <!-- Prabhupada -->
+        <div class="q-card" onclick="loadCategory('levels_multi', 'Prabhupada')" data-aos="fade-up" data-aos-delay="100">
+            <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_EXseQhXiXGhFvEEzMtNKsVQxbgLqurLOHxIPYLB-IcGmv8IlLULZ7soivrcNLmRbX8wmFElWJuQrL9EOL-O_rAOPlrWqzHIjWZaGm_BywIbNHCgjVD6D5bYfDCBBNkefhu0nyKI5A4R6an5gy8fS7JLj8fDiQkIlu8ZKL9vgP3unbmgaa-J_7tUg8olb/s1024/1000098087.png" class="q-img" style="object-position: top;"></div>
+            <div class="q-content">
+                <div class="play-btn-float"><i class="fas fa-bolt"></i></div>
+                <div class="q-title" data-key="cat_prabhu">Srila Prabhupada</div>
+            </div>
+        </div>
+
+        <!-- Krishna -->
+        <div class="q-card" onclick="loadCategory('levels_krishna', 'Krishna Leela')" data-aos="fade-up" data-aos-delay="200">
+            <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjC6MgpYsrd8g1IBV2TTQLezkpntu-Bx3gb_7t0A-l-pcacTzGUotyeHOF6NOisKsvFiUrThiYZQ7ZsUZZMcnVGERYT-3OKXtHFHhmGpQgBGYSLw8vZ9LbHDV2zH7Gob9i6jC9NxoPFU-LWc8lWrbrwx8h-HpXVlJKl5qNjA1lNV8zriNxqMVF5fjuHECGi/s1024/1000098088.png" class="q-img" style="object-position: top;"></div>
+            <div class="q-content">
+                <div class="play-btn-float"><i class="fas fa-crown"></i></div>
+                <div class="q-title" data-key="cat_krishna">Shree Krishna</div>
+            </div>
+        </div>
+
+        <!-- Ramayan -->
+        <div class="q-card" onclick="loadCategory('levels_ramayan', 'Ramayan')" data-aos="fade-up" data-aos-delay="300">
+            <div class="q-img-box"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghB61cw_2ud5OVnT3t0-AR8L408ITAx3JSukhyphenhyphenSvUdoSGDhdCAcjBL_Uq_EsqYlvgkAepbKuCJVTU2KBxtSMzgXa9YfciM5dZv6lLAjcP7t2Q0ME_UV9eXwgIWP3Sx7siBQ0OYVL27aQ-8q0Oo2CnG0nLOSmtdKOk8dgxADF7atlMFyjmsvUtnqEbublKC/s1024/1000098086.png" class="q-img"></div>
+            <div class="q-content">
+                <div class="play-btn-float"><i class="fas fa-play"></i></div>
+                <div class="q-title" data-key="cat_ram">Ramayan</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LEVELS -->
+<div id="screen-levels" class="screen">
+    <div id="lvl-container" class="lvl-list">Loading...</div>
+</div>
+
+<!-- GAME -->
+<div id="screen-game" class="screen">
+    <div class="d-flex justify-content-between px-4 text-white fw-bold">
+        <span><span data-key="score_lbl">Score</span>: <span id="score">0</span></span>
+        <span><i class="fas fa-heart"></i></span>
+    </div>
+
+    <div class="game-card">
+        <div class="timer-badge" id="timer">30</div>
+        <div id="q-text">Loading...</div>
+    </div>
+
+    <div class="opt-grid">
+        <button class="opt-btn" id="opt0" onclick="check(0)">A</button>
+        <button class="opt-btn" id="opt1" onclick="check(1)">B</button>
+        <button class="opt-btn" id="opt2" onclick="check(2)">C</button>
+        <button class="opt-btn" id="opt3" onclick="check(3)">D</button>
+    </div>
+
+    <div class="lifelines">
+        <button class="life-btn" id="ll-50" onclick="use5050()"><i class="fas fa-cut"></i></button>
+        <button class="life-btn" id="ll-poll" onclick="usePoll()"><i class="fas fa-poll"></i></button>
+        <button class="life-btn" id="ll-skip" onclick="nextQuestion()"><i class="fas fa-forward"></i></button>
+    </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+    <div class="res-box">
+        <i class="fas fa-trophy trophy"></i>
+        <h2 data-key="good_job">Good Job!</h2>
+        <p data-key="you_scored">You scored</p>
+        <div class="score-big" id="final-score">0</div>
+        <button class="btn-home" onclick="goHome()" data-key="play_again">Play Again</button>
+    </div>
+</div>
+
+<!-- POLL MODAL -->
+<div id="poll-modal" class="modal-overlay" onclick="this.style.display='none'">
+    <div class="modal-card">
+        <h4 class="text-center fw-bold mb-3" data-key="poll_title">Audience Says</h4>
+        <div id="poll-bars"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+    AOS.init();
+    
+    // FIREBASE
+    const firebaseConfig = { apiKey: "AIzaSyDxuMG5tqPshrZBs4DSwQFAEnN4ufpAoEQ", authDomain: "iskcon-quize.firebaseapp.com", databaseURL: "https://iskcon-quize-default-rtdb.firebaseio.com", projectId: "iskcon-quize", storageBucket: "iskcon-quize.firebasestorage.app", messagingSenderId: "912283239180", appId: "1:912283239180:web:71d3500598a0aa8308ff29" };
+    firebase.initializeApp(firebaseConfig); const db = firebase.database();
+
+    // UI TRANSLATION DATA
+    const uiData = {
+        en: { title: "Magic Quiz", cat_gita: "Bhagavad Gita", cat_krishna: "Krishna Leela", cat_prabhu: "Srila Prabhupada", cat_ram: "Ramayan", lets_play: "Let's Play!", score_lbl: "Score", good_job: "Good Job!", you_scored: "You scored", play_again: "Play Again", poll_title: "Audience Says" },
+        hi: { title: "जादुई क्विज़", cat_gita: "भगवद गीता", cat_krishna: "कृष्ण लीला", cat_prabhu: "श्रील प्रभुपाद", cat_ram: "रामायण", lets_play: "चलो खेलें!", score_lbl: "अंक", good_job: "शाबाश!", you_scored: "आपका स्कोर", play_again: "फिर से खेलें", poll_title: "जनता की राय" },
+        mr: { title: "जादुई प्रश्नमंजुषा", cat_gita: "भगवद गीता", cat_krishna: "कृष्ण लीला", cat_prabhu: "श्रील प्रभुपाद", cat_ram: "रामायण", lets_play: "चला खेळूया!", score_lbl: "गुण", good_job: "मस्त खेळलात!", you_scored: "तुमचे गुण", play_again: "पुन्हा खेळा", poll_title: "प्रेक्षकांचे मत" }
+    };
+
+    // STATE
+    let selectedLang = localStorage.getItem('lang') || 'en';
+    let currentQuestions=[], qIndex=0, score=0, timerInt, timeLeft=30;
+    let screenStack = ['screen-home'];
+
+    // INIT
+    window.onload = function() {
+        const dd = document.getElementById('lang');
+        if(dd) dd.value = selectedLang;
+        updateUIText();
+    };
+
+    function changeLanguage(val) {
+        selectedLang = val;
+        localStorage.setItem('lang', val);
+        updateUIText();
+    }
+
+    function updateUIText() {
+        const t = uiData[selectedLang];
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if(t[key]) el.innerText = t[key];
+        });
+    }
+
+    // NAVIGATION
+    function show(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(screenStack[screenStack.length-1] !== id) screenStack.push(id);
+    }
+    
+    // GITHUB SAFE BACK BUTTON LOGIC
+    function goBack() {
+        if(screenStack.length > 1) { 
+            // If inside the quiz (levels or game), go back one step
+            screenStack.pop(); 
+            const prevScreen = screenStack.pop(); 
+            show(prevScreen); 
+        } else {
+            // If on the Home screen of the quiz, exit to Hub
+            window.location.href = "stories-games.html";
+        }
+    }
+    
+    function goHome() { screenStack=['screen-home']; show('screen-home'); }
+
+    // LEVELS
+    function loadCategory(path, title) {
+        show('screen-levels');
+        document.getElementById('lvl-container').innerHTML = '<div class="text-center mt-5 text-white">Loading...</div>';
+        db.ref(path).once('value', snapshot => {
+            const list = document.getElementById('lvl-container'); list.innerHTML = "";
+            const data = snapshot.val();
+            if(!data) { list.innerHTML = "<div class='text-center text-white'>No levels found!</div>"; return; }
+            Object.entries(data).forEach(([key, val]) => {
+                const name = val.name[selectedLang] || val.name['en'];
+                list.innerHTML += `<div class="lvl-item" onclick="startGame('${path}/${key}/questions')"><span class="lvl-name">${name}</span><button class="lvl-play"><i class="fas fa-play"></i></button></div>`;
+            });
+        });
+    }
+
+    // GAME
+    function startGame(path) {
+        db.ref(path).once('value', snapshot => {
+            if(!snapshot.val()) return alert("No questions!");
+            currentQuestions = Object.values(snapshot.val());
+            qIndex = 0; score = 0;
+            document.querySelectorAll('.life-btn').forEach(b => b.disabled = false);
+            show('screen-game'); loadQuestion();
+        });
+    }
+
+    function loadQuestion() {
+        if(qIndex >= currentQuestions.length) { showResult(); return; }
+        const qData = currentQuestions[qIndex];
+        currentAnsIndex = qData.a;
+        document.getElementById('q-text').innerHTML = qData.q[selectedLang] || qData.q['en'];
+        document.getElementById('score').innerText = score;
+        document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+            btn.className = 'opt-btn'; btn.disabled = false;
+            let txt = qData.o && qData.o[i] ? (qData.o[i][selectedLang] || qData.o[i]['en']) : "Opt";
+            btn.innerHTML = `<b>${['A','B','C','D'][i]}</b>. ${txt}`;
+        });
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInt); timeLeft = 30; document.getElementById('timer').innerText = timeLeft;
+        timerInt = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft; if(timeLeft<=0) { clearInterval(timerInt); check(-1); } }, 1000);
+    }
+
+    function check(idx) {
+        clearInterval(timerInt);
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+        if(idx === currentAnsIndex) {
+            document.getElementById('opt'+idx).classList.add('correct');
+            score += 1000; setTimeout(() => { qIndex++; loadQuestion(); }, 1500);
+        } else {
+            if(idx !== -1) document.getElementById('opt'+idx).classList.add('wrong');
+            document.getElementById('opt'+currentAnsIndex).classList.add('correct');
+            setTimeout(showResult, 2000);
+        }
+    }
+
+    function nextQuestion() { document.getElementById('ll-skip').disabled = true; qIndex++; loadQuestion(); }
+    function use5050() { document.getElementById('ll-50').disabled = true; let h=0;[0,1,2,3].sort(()=>Math.random()-0.5).forEach(i=>{if(i!==currentAnsIndex && h<2){document.getElementById('opt'+i).classList.add('hidden'); h++;}}); }
+    function usePoll() {
+        document.getElementById('ll-poll').disabled = true; document.getElementById('poll-modal').style.display = 'flex';
+        let p=[10,10,10,10]; p[currentAnsIndex]=60;
+        document.getElementById('poll-bars').innerHTML = ['A','B','C','D'].map((l,i)=>`<div class="d-flex align-items-center mb-2"><b class="me-2">${l}</b><div class="progress w-100" style="height:10px"><div class="progress-bar bg-warning" style="width:${p[i]+Math.random()*10}%"></div></div></div>`).join('');
+    }
+    function showResult() { show('screen-result'); document.getElementById('final-score').innerText = score; }
+</script>
+</body>
+</html>

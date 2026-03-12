@@ -1,1 +1,318 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>ISKCON Gallery</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- PhotoSwipe CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Poppins:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* =========================================
+           ✨ ULTRA-PREMIUM IMMERSIVE UI/UX
+           ========================================= */
+        :root {
+            --primary: #FF9933; 
+            --bg-dark: #050505;
+            --card-dark: #121212;
+            --text-gold: #FFD700;
+            --epic-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+            --glow-shadow: 0 8px 25px rgba(255, 153, 51, 0.3);
+        }
+
+        body { 
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, #1a1005 0%, transparent 50%),
+                              radial-gradient(circle at bottom left, #120a02 0%, transparent 50%);
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif; 
+            color: white; margin: 0; padding-bottom: 40px;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 🪟 Premium Sticky Glass Header */
+        .premium-header {
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+            background: rgba(10, 5, 2, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 153, 51, 0.15);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+        }
+
+        .back-btn {
+            color: white;
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+        }
+        .back-btn:active {
+            transform: scale(0.85);
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: white;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        /* Empty spacer to perfectly center the title against the back button */
+        .header-spacer {
+            width: 35px; 
+        }
+
+        /* 🖼️ Premium Immersive Gallery Grid */
+        .pswp-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 14px; 
+            padding: 20px 14px;
+        }
+
+        .gallery-item {
+            position: relative; display: block; border-radius: 20px;
+            overflow: hidden; box-shadow: var(--epic-shadow);
+            aspect-ratio: 3 / 4; /* Perfect tall proportion for Deities */
+            background: var(--card-dark); 
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+        }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        /* Tactile Touch Feedback */
+        .gallery-item:active { transform: scale(0.95); border-color: rgba(255, 153, 51, 0.5); box-shadow: var(--glow-shadow); }
+        .gallery-item:active img { transform: scale(1.1); }
+
+        /* 🪟 Clean Glass Caption Overlay */
+        .caption-overlay {
+            position: absolute; 
+            bottom: 10px; left: 10px; right: 10px;
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            color: white; padding: 10px 8px;
+            text-align: center; 
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .cap-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600; font-size: 0.85rem; color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8); 
+            line-height: 1.2;
+            display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        
+        .cap-desc {
+            font-size: 0.65rem; font-weight: 500; color: var(--primary); 
+            display: none; margin-top: 2px;
+        }
+        
+        .show-sub .cap-desc { display: block; }
+
+        /* Zoom Lightbox Typography Customization */
+        .pswp__caption__center { 
+            text-align: center; font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif; 
+            color: var(--text-gold); font-size: 1rem; font-weight: 500; 
+            padding-bottom: 30px; text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+        }
+        .pswp__bg { background: rgba(0, 0, 0, 0.95) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        
+        .hidden-caption-text { display: none; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 🪟 Premium Simple Header (GitHub Safe Navigation) -->
+    <div class="premium-header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="header-title" data-lang-key="app_name">Divine Gallery</h1>
+        <div class="header-spacer"></div> 
+    </div>
+
+    <!-- 🖼️ Immersive Gallery Grid -->
+    <div class="pswp-gallery" id="my-gallery">
+        
+        <!-- 1. Temple Entrance -->
+        <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s1600/1000096371.webp" 
+           data-pswp-width="933" data-pswp-height="1244" target="_blank" class="gallery-item" data-aos="fade-up" data-aos-delay="0">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjEl4fFheeQljSLtRMh5Gnq3c3j6xqwSfX3YeN4pI02ebfKmtwsFXLauHOMBNdClFdgXpkaV2j5gJFwxDBMDcUVi-fonSaA8qFPnpaMPlO6u305qP0rcPqGa4iufh-W5bIXbMLIHYjApRlZhF2uw8CFb65UikYDB42pU9Iu2xW1hRSiA2gGzqvaxP9V1APd/s700/1000096371.webp" alt="Entrance" loading="lazy" />
+            <div class="caption-overlay">
+                <span class="cap-title" data-lang-key="img1_title">Temple Entrance</span>
+            </div>
+            <span class="hidden-caption-text" data-lang-key="img1_desc">Welcome to ISKCON Hadapsar</span>
+        </a>
+
+        <!-- 2. Sri Sri Gaura Nitai -->
+        <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s1600/1000096372.webp" 
+           data-pswp-width="700" data-pswp-height="700" target="_blank" class="gallery-item" data-aos="fade-up" data-aos-delay="100">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2iMJBEfqMuK3Oa3mKqhQkVHVL8lTJ0p1YoyX77hCJwiVLpxzuMoQGxiM8qU2lU5DXGGvafYIaTKEMmKak18XBD9pr6R8fJZugNTdmoiY4lgiSQjBCe-CgXI2lDe1bvMYs6_koVGSXqlMxTuhNitYEBXwoS_amo726zM2GXMUY0uY2JTnmi3oFtqIdLwJy/s700/1000096372.webp" alt="Gaura Nitai" loading="lazy" />
+            <div class="caption-overlay">
+                <span class="cap-title" data-lang-key="img2_title">Sri Sri Gaura Nitai</span>
+            </div>
+            <span class="hidden-caption-text" data-lang-key="img2_title">Sri Sri Gaura Nitai</span>
+        </a>
+
+        <!-- 3. Main Altar -->
+        <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" 
+           data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item" data-aos="fade-up" data-aos-delay="200">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgftLPu_jM1WHAD6_G2d4oMSu8SRkHeb6ZE3OLM2HyXiyDPY2Ch0b2Zk18g0kGFJHd8zseNi7dMUZFz7WmuehpnHtGlOXGSedcwy4hWt0G8oWMwuU0fBw_OWAX0ZcnkIW0yomsKcwoV8KrrlVYAMErXxJMIpZk3v1cxnZKuRXWUL3lzwzgW3PzsBg2t_ger/s700/1000096370.webp" alt="Main Altar" loading="lazy" />
+            <div class="caption-overlay">
+                <span class="cap-title" data-lang-key="img3_title">Main Altar</span>
+            </div>
+            <span class="hidden-caption-text" data-lang-key="img3_desc">Beautiful Darshan of Deities</span>
+        </a>
+
+        <!-- 4. Govardhan Festival -->
+        <a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" 
+           data-pswp-width="700" data-pswp-height="525" target="_blank" class="gallery-item show-sub" data-aos="fade-up" data-aos-delay="300">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjTdGA5YE6KB8Vjv_NB-dvHEDho3t5JXv5Cl0V2LRW6nZrujh_kasEl4AixZ-1RyWLDiaWWDnkTgabDUTbKsfiKGTeZwras2RH5nCzo5aaL2uxB9zUyn8zWw9QRH02nOo0XBrWezCUFp-Qe_9Q3QHgYLiDsMJrW1w_hxXc28YRUMmbx-hvXm2oW-I_WoBSw/s700/1000096373.webp" alt="Govardhan" loading="lazy" />
+            <div class="caption-overlay">
+                <span class="cap-title" data-lang-key="img4_title">Govardhan Puja</span>
+                <span class="cap-desc" data-lang-key="img4_sub">Giriraj Dharan Lila</span>
+            </div>
+            <span class="hidden-caption-text" data-lang-key="img4_desc">Lord Krishna lifting Govardhan Hill to protect Vrindavan.</span>
+        </a>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe-lightbox.esm.min.js';
+        import PhotoSwipe from 'https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.esm.min.js';
+
+        // Initialize Smooth Cinematic Animations
+        AOS.init({ once: true, offset: 10, easing: 'ease-out-cubic', duration: 700 });
+
+        // --- 🌍 MULTI-LANGUAGE DATA ---
+        const langData = {
+            en: {
+                app_name: "Divine Gallery",
+                img1_title: "Temple Entrance", img1_desc: "Main Entrance of ISKCON Hadapsar",
+                img2_title: "Sri Sri Gaura Nitai",
+                img3_title: "Main Altar", img3_desc: "Beautiful Altar Decoration",
+                img4_title: "Govardhan Puja", img4_sub: "Giriraj Dharan Lila",
+                img4_desc: "Lord Krishna lifting Govardhan Hill to protect the residents of Vrindavan from rain."
+            },
+            hi: {
+                app_name: "दिव्य गैलरी",
+                img1_title: "मंदिर प्रवेश द्वार", img1_desc: "इस्कॉन हडपसर का मुख्य द्वार",
+                img2_title: "श्री श्री गौर निताई",
+                img3_title: "मुख्य वेदी दर्शन", img3_desc: "भगवान का सुंदर श्रृंगार और सजावट",
+                img4_title: "गोवर्धन पूजा", img4_sub: "गिरिराज धारण लीला",
+                img4_desc: "भगवान श्री कृष्ण ने वृंदावन वासियों की रक्षा के लिए गोवर्धन पर्वत उठाया।"
+            },
+            mr: {
+                app_name: "दिव्य गॅलरी",
+                img1_title: "मंदिर प्रवेशद्वार", img1_desc: "इस्कॉन हडपसरचे मुख्य प्रवेशद्वार",
+                img2_title: "श्री श्री गौर निताई",
+                img3_title: "मुख्य वेदी दर्शन", img3_desc: "देवाची सुंदर सजावट आणि दर्शन",
+                img4_title: "गोवर्धन पूजा", img4_sub: "गिरिराज धारण लीला",
+                img4_desc: "वृंदावनवासीयांच्या रक्षणासाठी भगवान श्रीकृष्णांनी गोवर्धन पर्वत उचलला."
+            }
+        };
+
+        // --- 🌐 APPLY LANGUAGE LOGIC ---
+        function applyLanguage() {
+            const savedLang = localStorage.getItem('lang') || 'en';
+            const texts = langData[savedLang];
+
+            // Update UI Text Elements
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (texts[key]) el.innerText = texts[key];
+            });
+
+            // Update PhotoSwipe Full-screen Captions
+            const galleryLinks = document.querySelectorAll('.gallery-item');
+            galleryLinks.forEach(link => {
+                const hiddenText = link.querySelector('.hidden-caption-text');
+                const titleText = link.querySelector('.cap-title');
+                
+                if (hiddenText && titleText) {
+                    const descKey = hiddenText.getAttribute('data-lang-key');
+                    const titleKey = titleText.getAttribute('data-lang-key');
+                    
+                    const descString = texts[descKey] ? `<small style="opacity:0.8;">${texts[descKey]}</small>` : '';
+                    const fullCaption = `<strong style="letter-spacing:0.5px; font-size:1.1rem;">${texts[titleKey]}</strong><br>${descString}`;
+                    
+                    link.setAttribute('data-pswp-caption-content', fullCaption);
+                }
+            });
+        }
+
+        // --- 🔍 INITIALIZE LIGHTBOX ---
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#my-gallery',
+            children: 'a',
+            pswpModule: PhotoSwipe,
+            bgOpacity: 0.98, // Deep sleek background for zoom view
+            showHideAnimationType: 'zoom', // Premium scale effect
+            
+            pswpFilters: (filters) => {
+                filters.register('uiElement', (element, data) => {
+                    if (data.name === 'caption-content') {
+                        const currSlide = lightbox.currSlide;
+                        if (currSlide && currSlide.data.element) {
+                            const captionHTML = currSlide.data.element.getAttribute('data-pswp-caption-content');
+                            element.innerHTML = captionHTML || '';
+                        }
+                    }
+                });
+                return filters;
+            }
+        });
+
+        // Execute functions
+        applyLanguage();
+        lightbox.init();
+
+    </script>
+</body>
+</html>

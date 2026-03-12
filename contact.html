@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ISKCON Hadapsar - Connect</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <!-- Animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #e67e22;
+            --primary-dark: #d35400;
+            --gold: #ffda79;
+            --bg-offwhite: #fdfaf5;
+            --text-main: #2d3436;
+            --card-glass: rgba(255, 255, 255, 0.95);
+        }
+
+        /* --- Global Reset & App Feel --- */
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-offwhite);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: radial-gradient(#ffeaa7 0.8px, transparent 0.8px);
+            background-size: 18px 18px;
+            padding-top: 42px; /* Space for fixed header */
+        }
+
+        /* --- 1. Sticky Mahamantra Header --- */
+        .fixed-mantra {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: 42px;
+            background: linear-gradient(90deg, #571e4e, #8e44ad);
+            color: #fff;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,218,121,0.3);
+        }
+        .mantra-text {
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-top: 2px;
+            display: inline-block;
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            position: relative;
+            height: 380px;
+            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg') center top/cover no-repeat;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(211, 84, 0, 0.9) 100%);
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 70px;
+            text-align: center;
+        }
+
+        /* --- NEW: Floating Back Button --- */
+        .nav-back-container {
+            position: absolute;
+            top: 60px; /* Adjusted safely below the fixed header */
+            left: 20px;
+            z-index: 100;
+        }
+        .btn-glass-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.15); /* Glass effect */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-glass-back:hover, .btn-glass-back:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-3px);
+            color: var(--gold);
+        }
+
+        .title-group h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: white;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 800;
+        }
+        .title-group p {
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* --- Content Container --- */
+        .app-container {
+            margin-top: -60px;
+            position: relative;
+            z-index: 5;
+            padding-bottom: 80px;
+        }
+
+        /* --- Glass Cards --- */
+        .contact-card {
+            background: var(--card-glass);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            padding: 22px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .contact-card:active { transform: scale(0.98); }
+        
+        .accent-bar {
+            position: absolute;
+            top: 25px; left: 0;
+            width: 4px; height: 35px;
+            background: var(--primary);
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .role-text {
+            color: var(--primary-dark);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .name-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+
+        /* --- Buttons --- */
+        .btn-row { display: flex; gap: 10px; margin-top: 15px; }
+        
+        .action-btn {
+            flex: 1;
+            border: none;
+            padding: 12px;
+            border-radius: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .btn-call { background-color: #f1f2f6; color: #2d3436; }
+        .btn-call:active { background-color: #dfe4ea; transform: scale(0.97); }
+
+        .btn-wp { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            color: white; 
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.25);
+        }
+        .btn-wp:active { box-shadow: none; transform: scale(0.97); color: white; }
+
+        /* --- Map Styling --- */
+        .map-box {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-top: 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* --- Developer & Footer --- */
+        .lotus-divider {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            color: #f39c12;
+        }
+        .fa-spa { animation: breathe 3s infinite ease-in-out; }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 10px rgba(243, 156, 18, 0.8); }
+        }
+
+        /* Premium Dev Card - High Tech Style */
+        .dev-footer-wrapper {
+            background: #121212; /* Deep Black */
+            margin: 0 15px;
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        /* Shine Effect */
+        .dev-footer-wrapper::before {
+            content:''; position: absolute; top:0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            animation: shine 5s infinite;
+        }
+        @keyframes shine { 100% { left: 100%; } }
+
+        .dev-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #636e72;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .dev-name {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-family: 'Outfit', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tech-pill {
+            display: inline-block;
+            background: rgba(30, 144, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 50px;
+            color: #3498db;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 15px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-pill:active {
+            transform: scale(0.95);
+            background: rgba(30, 144, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. FIXED MARQUEE WITH LOTUS ICON -->
+    <div class="fixed-mantra">
+        <marquee scrollamount="6" scrolldelay="80">
+            <span class="mantra-text">
+                <i class="fas fa-spa mx-3" style="color: #ff9ff3;"></i> 
+                HARE KRISHNA HARE KRISHNA KRISHNA KRISHNA HARE HARE 
+                &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
+                HARE RAMA HARE RAMA RAMA RAMA HARE HARE 
+                &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
+                WELCOME TO ISKCON HADAPSAR
+            </span>
+        </marquee>
+    </div>
+
+    <!-- Hero Image Area -->
+    <div class="hero-section">
+        
+        <!-- 2. NAVIGATION / BACK BUTTON (FIXED FOR GITHUB) -->
+        <div class="nav-back-container">
+            <a href="index.html" class="btn-glass-back">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+
+        <div class="hero-overlay" data-aos="fade">
+            <div class="title-group">
+                <h1>ISKCON</h1>
+                <h2 style="font-family:'Cinzel', serif; font-size:1.8rem; color:white; margin:0;">HADAPSAR</h2>
+                <p>CONNECT WITH US</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container app-container">
+        
+        <!-- CARD 1 -->
+        <div class="contact-card" data-aos="fade-up" data-aos-delay="0">
+            <div class="accent-bar"></div>
+            <span class="role-text">Lead Contact</span>
+            <div class="name-text">Digvijay Arjundas</div>
+            <div class="btn-row">
+                <a href="tel:+919978984699" class="action-btn btn-call"><i class="fas fa-phone"></i> Call</a>
+                <a href="https://wa.me/919978984699?text=Hare+Krishna+Prabhu" class="action-btn btn-wp" target="_blank"><i class="fab fa-whatsapp"></i> Chat</a>
+            </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="contact-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="accent-bar" style="background:#f1c40f;"></div>
+            <span class="role-text" style="color:#f39c12;">Official Enquiries</span>
+            <div class="name-text">Temple Office</div>
+            <div class="btn-row">
+                <a href="tel:+919209551462" class="action-btn btn-call"><i class="fas fa-phone"></i> Call</a>
+                <a href="https://wa.me/919209551462?text=Hare+Krishna+Temple+Office" class="action-btn btn-wp" target="_blank"><i class="fab fa-whatsapp"></i> Chat</a>
+            </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="contact-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="accent-bar"></div>
+            <span class="role-text">Seva & Donations</span>
+            <div class="name-text">Ashray Giriraj Prabhu</div>
+            <div class="btn-row">
+                <a href="tel:+919922763603" class="action-btn btn-call"><i class="fas fa-phone"></i> Call</a>
+                <a href="https://wa.me/919922763603?text=Hare+Krishna+Prabhu" class="action-btn btn-wp" target="_blank"><i class="fab fa-whatsapp"></i> Chat</a>
+            </div>
+        </div>
+
+        <!-- ADDRESS & MAP CARD -->
+        <div class="contact-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-map-marked-alt fa-2x me-3" style="color:var(--primary);"></i>
+                <h5 style="font-family:'Cinzel', serif; font-weight:700; margin:0;">Temple Location</h5>
+            </div>
+            
+            <p style="font-size:0.9rem; color:#636e72; line-height:1.5;">
+                GW2M+X5J, Pune - Solapur Rd, near Kanyadan Mangal Karyalaya, Aru Nagar, Hadapsar, Pune - 411028
+            </p>
+
+            <div class="map-box">
+                <!-- ACCURATE LOCATION MAP -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.5651586940885!2d73.94584281481232!3d18.50346378741873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c1c1a9c3b7f1%3A0x6b772c7a5223e7f9!2sGW2M%2BX5J%2C%20Pune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000" 
+                    width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+
+            <a href="https://www.google.com/maps/dir//ISKCON+Hadapsar+NVCC+Extension" target="_blank" class="action-btn btn-call mt-3" style="background: white; border:1px solid #ddd;">
+                <i class="fas fa-location-arrow"></i> Get Directions
+            </a>
+        </div>
+
+        <!-- DECORATIVE DIVIDER -->
+        <div class="lotus-divider">
+            <!-- Animated Lotus Breathing Effect -->
+            <i class="fas fa-spa fa-3x" style="color: #f1c40f;"></i>
+            <p style="font-size:0.75rem; margin-top:10px; opacity:0.6;">DEDICATED TO HIS DIVINE GRACE<br>A.C. BHAKTIVEDANTA SWAMI PRABHUPADA</p>
+        </div>
+
+        <br>
+
+        <!-- HIGH-END DEVELOPER CARD -->
+        <div class="dev-footer-wrapper" data-aos="zoom-in">
+            <div class="dev-label">System Architecture</div>
+            <div class="dev-name">
+                Santosh Mishra
+                <i class="fas fa-check-circle" style="color: #3498db; font-size: 0.9rem; margin-left:5px;" title="Verified Tech Lead"></i>
+            </div>
+            <p style="color:#7f8c8d; font-size:0.8rem; margin:0;">Full Stack Solutions Engineer</p>
+            
+            <a href="mailto:santoshmishra@example.com" class="tech-pill">
+                <i class="fas fa-code"></i> &nbsp;DEV PROFILE
+            </a>
+        </div>
+
+      <div style="height:30px;"></div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>

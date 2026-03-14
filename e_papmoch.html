@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Papamochani Ekadashi - ISKCON Hadapsar</title>
+    
+    <!-- Icons & Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+Devanagari:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #D35400; /* Saffron */
+            --bg-color: #FFF3E0;
+            --card-bg: #ffffff;
+            --text-dark: #3E2723;
+            --text-light: #5D4037;
+            --red-timer: #C0392B;
+            --green-success: #27AE60;
+            --gold: #F1C40F;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: var(--primary);
+            padding: 15px; position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .back-btn {
+            background: none; border: none; color: white;
+            font-size: 1.2rem; cursor: pointer; padding: 5px 10px;
+            border-radius: 5px; transition: background 0.3s;
+        }
+        .back-btn:active { background: rgba(255,255,255,0.2); }
+        
+        .header-title {
+            color: white; font-family: 'Cinzel', 'Noto Sans Devanagari', serif;
+            font-size: 1.1rem; margin: 0; font-weight: 700; flex-grow: 1;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4);
+            color: white; font-size: 0.8rem; padding: 5px 10px; border-radius: 20px;
+            font-weight: bold; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .lang-btn:hover { background: rgba(255,255,255,0.4); }
+
+        /* --- TIMER CARD --- */
+        .timer-section {
+            background: #fff; margin: 15px; padding: 20px;
+            border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center; border-top: 5px solid var(--primary);
+            position: relative;
+        }
+
+        .status-badge {
+            font-size: 1rem; font-weight: 700; color: var(--primary);
+            margin-bottom: 5px; display: block; letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .timer-big {
+            font-size: 2.5rem; font-weight: bold; color: var(--text-dark);
+            font-family: 'Poppins', sans-serif; line-height: 1.1; margin: 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .timer-label { font-size: 0.8rem; color: #888; display: block; margin-bottom: 10px; }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%; background: #eee; height: 8px; border-radius: 10px;
+            overflow: hidden; margin: 15px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            height: 100%; background: var(--red-timer); width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Time Grid */
+        .time-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px;
+        }
+        .time-box strong { display: block; font-size: 1.1rem; color: #333; margin-top: 3px; }
+        .time-box span { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px;}
+
+        /* --- CONTENT BODY --- */
+        .content-wrapper { padding: 0 20px; max-width: 800px; margin: 0 auto; }
+
+        .hero-img {
+            width: 100%; height: 220px; object-fit: cover; border-radius: 15px;
+            margin-bottom: 25px; box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            object-position: top; transition: transform 0.5s ease;
+        }
+        .hero-img:hover { transform: scale(1.02); }
+
+        h2 {
+            font-family: 'Cinzel', 'Noto Sans Devanagari', serif;
+            color: var(--primary); font-size: 1.4rem;
+            margin-top: 30px; margin-bottom: 15px;
+            border-bottom: 2px solid #ebdcb2; padding-bottom: 5px;
+        }
+
+        p {
+            line-height: 1.7; font-size: 0.95rem; color: var(--text-light);
+            text-align: justify; margin-bottom: 15px;
+        }
+
+        /* Dialogue Box */
+        .dialogue {
+            font-style: italic; color: #4e342e; font-weight: 600;
+            background: #fff8e1; padding: 15px; border-radius: 10px;
+            margin: 20px 0; border-left: 4px solid var(--gold);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: #fff; padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin: 20px 0;
+            border: 1px solid #ffe0b2;
+        }
+        .highlight-box ul { padding-left: 20px; margin: 0; }
+        .highlight-box li { margin-bottom: 8px; color: var(--text-dark); }
+
+        /* Enhanced Rules Container */
+        .rules-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fdfa 100%);
+            border-left: 6px solid var(--green-success);
+            padding: 20px 25px; border-radius: 12px; margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.08);
+            position: relative; overflow: hidden;
+        }
+        .rules-container::after {
+            content: '\f0f6'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; right: -15px; bottom: -15px;
+            font-size: 5rem; color: rgba(39, 174, 96, 0.05);
+        }
+        .rules-container ul { list-style-type: none; padding-left: 0; margin: 0; }
+        .rules-container li {
+            position: relative; padding-left: 32px; margin-bottom: 15px;
+            font-size: 0.95rem; color: var(--text-dark); line-height: 1.6;
+        }
+        .rules-container li:last-child { margin-bottom: 0; }
+        .rules-container li::before {
+            content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            color: var(--green-success); position: absolute;
+            left: 0; top: 3px; font-size: 1.1rem;
+        }
+
+        /* Enhanced Notes Container */
+        .notes-container {
+            background: linear-gradient(135deg, #fffcf8 0%, #f7f1e9 100%);
+            padding: 22px; border-radius: 12px; margin: 25px 0;
+            border: 1px dashed #dcb897; font-size: 0.9rem;
+            color: var(--text-light); box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+        }
+        .notes-container p { margin-bottom: 12px; }
+        .notes-container p:last-child { margin-bottom: 0; }
+
+        .conclusion {
+            background: #e8f5e9; color: #1b5e20; padding: 20px; 
+            border-radius: 12px; border: 1px solid #a5d6a7; 
+            margin-top: 30px; font-weight: bold; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .footer {
+            text-align: center; padding: 30px 20px; background: #3E2723; 
+            color: #bcaaa4; font-size: 0.8rem; margin-top: 40px;
+        }
+
+        /* Smooth UI/UX Animations */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-wrapper > * {
+            animation: fadeInUp 0.7s ease-out forwards;
+            opacity: 0;
+        }
+
+        .content-wrapper > *:nth-child(1) { animation-delay: 0.1s; }
+        .content-wrapper > *:nth-child(2) { animation-delay: 0.2s; }
+        .content-wrapper > *:nth-child(3) { animation-delay: 0.3s; }
+        .content-wrapper > *:nth-child(4) { animation-delay: 0.4s; }
+        .content-wrapper > *:nth-child(5) { animation-delay: 0.5s; }
+        .content-wrapper > *:nth-child(6) { animation-delay: 0.6s; }
+        .content-wrapper > *:nth-child(7) { animation-delay: 0.7s; }
+        .content-wrapper > *:nth-child(8) { animation-delay: 0.8s; }
+        .content-wrapper > *:nth-child(9) { animation-delay: 0.9s; }
+        .content-wrapper > *:nth-child(10) { animation-delay: 1.0s; }
+        .content-wrapper > *:nth-child(11) { animation-delay: 1.1s; }
+        .content-wrapper > *:nth-child(12) { animation-delay: 1.2s; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-title" data-key="title">Papamochani Ekadashi</div>
+        <button class="lang-btn" onclick="toggleLanguage()" id="lang-indicator">EN</button>
+    </div>
+
+    <!-- TIMER SECTION -->
+    <div class="timer-section">
+        <span class="status-badge" id="fast-status-text">Checking...</span>
+        
+        <div class="timer-big" id="countdown-display">--:--:--</div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-fill"></div>
+        </div>
+        <span class="timer-label" id="timer-label-text">Time Remaining</span>
+
+        <div class="time-grid">
+            <div class="time-box">
+                <span data-key="lbl_start">Start Time</span>
+                <strong id="start-time-display">--:--</strong>
+            </div>
+            <div class="time-box">
+                <span data-key="lbl_parana">Parana (Break Fast)</span>
+                <strong id="parana-time-display">--:--</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content-wrapper">
+        
+        <!-- Hero Image -->
+        <img src="https://i.pinimg.com/736x/8e/4a/0f/8e4a0fa84860b001a11400827254553b.jpg" 
+             class="hero-img" alt="Lord Vishnu">
+
+        <!-- Intro -->
+        <h2 data-key="head_1"></h2>
+        <div class="dialogue" data-key="dialogue_1"></div>
+        <p data-key="intro_text"></p>
+
+        <!-- The Story -->
+        <h2 data-key="head_2"></h2>
+        <p data-key="story_1"></p>
+        
+        <!-- Highlight: The Curse -->
+        <div class="highlight-box">
+            <strong style="color:var(--primary); display:block; margin-bottom:10px;" data-key="curse_title"></strong>
+            <p data-key="curse_text" style="margin:0;"></p>
+        </div>
+
+        <p data-key="story_2"></p>
+        
+        <!-- Redemption -->
+        <h2 data-key="head_3"></h2>
+        <p data-key="redemption_text"></p>
+        <div class="dialogue" data-key="dialogue_2"></div>
+
+        <!-- NEW FEATURE: Fasting Rules Section -->
+        <h2 data-key="head_rules"></h2>
+        <div class="rules-container">
+            <ul>
+                <li data-key="rule_1"></li>
+                <li data-key="rule_2"></li>
+                <li data-key="rule_3"></li>
+            </ul>
+        </div>
+
+        <!-- NEW FEATURE: Scriptural Notes Section -->
+        <h2 data-key="head_notes"></h2>
+        <div class="notes-container">
+            <p data-key="note_1"></p>
+            <p data-key="note_2"></p>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="conclusion">
+            <i class="fas fa-om"></i> <span data-key="conclusion_text"></span>
+        </div>
+    </div>
+
+    <div class="footer">
+        ISKCON Hadapsar<br>
+        Based on Bhavishya-uttara Purana
+    </div>
+
+    <script>
+        // ================= CONFIGURATION (PAPAMOCHANI 2026 DATES) =================
+        // Date Format: Year, Month (0=Jan, 1=Feb, 2=Mar), Day, Hour, Minute
+        // As per Screenshot provided by user for Pune (+5.5)
+        const PAPAMOCHANI_TIMES = {
+            // Start: 15 March 2026, 06:43 AM
+            start: new Date(2026, 2, 15, 6, 43, 0),         
+            
+            // End of Fasting Day (Technically Parana Start)
+            end: new Date(2026, 2, 16, 6, 43, 0),
+
+            // Parana Window: 16 March 2026, 06:43 - 09:43 AM
+            paranaStart: new Date(2026, 2, 16, 6, 43, 0), 
+            paranaEnd: new Date(2026, 2, 16, 9, 43, 0)   
+        };
+        // =============================================================
+
+        const content = {
+            // ================= ENGLISH =================
+            en: {
+                title: "Papamochani Ekadashi",
+                status_active: "Fasting Active (Papamochani)",
+                status_upcoming: "Fasting Starts In",
+                status_ended: "Fasting Completed",
+                status_break: "Break Fast Now! (Parana)",
+                lbl_start: "Start Time",
+                lbl_parana: "Parana Time",
+
+                head_1: "The Question of Yudhishthira",
+                dialogue_1: "Shri Yudhishthira Maharaja said, 'Oh Supreme Lord, I wish to hear about the Ekadashi that occurs during the dark fortnight of the month of Chaitra (March-April). What is its name, Oh Lord, and what results can one attain?'",
+                intro_text: "Lord Shri Krishna replied: 'O best of kings, for the benefit of everyone I shall gladly describe to you the glories of this Ekadashi, known as <b>Papamochani</b>. It removes the influences of ghosts and demons, purifies one's life of all sinful reactions, and makes a person perfectly virtuous.'",
+
+                head_2: "The Story of Sage Medhavi & Manjughosha",
+                story_1: "In a beautiful forest bursting with flowers, the great sage Medhavi resided, performing severe austerities. Cupid, seeking to break his trance, sent the attractive dancing girl Manjughosha. Using her sweet singing and Cupid's weapons of taste, touch, sight, smell, and sound, she successfully enchanted the sage, and he abandoned his pure meditation. They stayed together for many days. When she was about to leave for heavenly planets, she asked, 'O Brahman! Please give me permission to return to my country.'",
+                
+                curse_title: "The Sage's Curse",
+                curse_text: "After realizing that 57 years had passed which seemed like a mere moment, Medhavi understood his spiritual life was ruined. Trembling with anger, he cursed Manjughosha: 'Oh sinful woman! You have turned my austerities to ashes! I curse you to become an evil hobgoblin - pishacha!'",
+
+                story_2: "Terrified, she begged for mercy. Medhavi told her that fasting on Papamochani Ekadashi would release her from his wrath. Meanwhile, the sage returned to his father, Chyavana Muni, who instructed him to also observe this same Ekadashi to eradicate the grievous sin of associating with her.",
+
+                head_3: "Liberation and Atonement",
+                redemption_text: "Both Medhavi and Manjughosha devoutly observed the Papamochani Ekadashi fast. Thus, all his sins were destroyed, and his spiritual merit was completely restored. Manjughosha became free from the hobgoblin curse and returned to the heavenly spheres.",
+                dialogue_2: "Lord Krishna concluded: 'Oh King Yudhishthira, whoever reads or hears about this Ekadashi obtains the exact same merit as donating a thousand cows, and nullifies all grievous sinful reactions.'",
+
+                head_rules: "Important Fasting Rules",
+                rule_1: "Fasting begins at sunrise on Ekadashi and lasts until the designated Parana time on Dwadashi.",
+                rule_2: "Strictly avoid all grains, beans, and certain vegetables like onions and garlic.",
+                rule_3: "Engage the mind by constantly chanting the Hare Krishna Mahamantra and reading sacred scriptures.",
+
+                head_notes: "Scriptural Notes",
+                note_1: "1. Cupid's influence is extraordinarily powerful; even Lord Shiva was disturbed by Kamadeva, eventually burning him to ashes with his third eye.",
+                note_2: "2. The material association with the opposite gender can cause a spiritual seeker to forget time, energy, and identity, just as Medhavi did for 57 years.",
+
+                conclusion_text: "Conclusion: Properly observing this holy day of Papamochani Ekadashi brings incalculable benefits and completely destroys all sins."
+            },
+
+            // ================= HINDI (Exactly as per User Screenshot) =================
+            hi: {
+                title: "पापमोचनी एकादशी",
+                status_active: "एकादशी व्रत जारी है",
+                status_upcoming: "उपवास कल है / प्रारंभ होगा",
+                status_ended: "व्रत पूर्ण हुआ",
+                status_break: "पारण का समय (व्रत खोलें)",
+                lbl_start: "उपवास प्रारम्भ करें",
+                lbl_parana: "अंतराल (पारण समय)",
+
+                head_1: "युधिष्ठिर का प्रश्न",
+                dialogue_1: "युधिष्ठिर महाराज ने भगवान श्रीकृष्ण से चैत्र (गुजरात महाराष्ट्र के अनुसार फाल्गुन) मास के कृष्णपक्ष की एकादशी के बारे में जानने की इच्छा प्रकट की तो वे बोले : ‘राजेन्द्र ! मैं तुम्हें इस विषय में एक पापनाशक उपाख्यान सुनाऊँगा, जिसे चक्रवर्ती नरेश मान्धाता के पूछने पर महर्षि लोमश ने कहा था ।’",
+                intro_text: "मान्धाता ने पूछा: भगवन् ! मैं लोगों के हित की इच्छा से यह सुनना चाहता हूँ कि चैत्र मास के कृष्णपक्ष में किस नाम की एकादशी होती है, उसकी क्या विधि है तथा उससे किस फल की प्राप्ति होती है? कृपया ये सब बातें मुझे बताइये ।",
+
+                head_2: "लोमश ऋषि द्वारा सुनाई गई कथा",
+                story_1: "लोमशजी ने कहा: नृपश्रेष्ठ ! पूर्वकाल की बात है । अप्सराओं से सेवित चैत्ररथ नामक वन में, जहाँ गन्धर्वों की कन्याएँ अपने किंकरो के साथ बाजे बजाती हुई विहार करती हैं, मंजुघोषा नामक अप्सरा मुनिवर मेधावी को मोहित करने के लिए गयी । वे महर्षि चैत्ररथ वन में रहकर ब्रह्मचर्य का पालन करते थे । मंजुघोषा मुनि के भय से आश्रम से एक कोस दूर ही ठहर गयी और सुन्दर ढंग से वीणा बजाती हुई मधुर गीत गाने लगी । मुनिश्रेष्ठ मेधावी घूमते हुए उधर जा निकले और उस सुन्दर अप्सरा को इस प्रकार गान करते देख बरबस ही मोह के वशीभूत हो गये । मुनि की ऐसी अवस्था देख मंजुघोषा उनके समीप आयी और वीणा नीचे रखकर उनका आलिंगन करने लगी । मेधावी भी उसके साथ रमण करने लगे । रात और दिन का भी उन्हें भान न रहा । इस प्रकार उन्हें बहुत दिन व्यतीत हो गये । मंजुघोषा देवलोक में जाने को तैयार हुई । जाते समय उसने मुनिश्रेष्ठ मेधावी से कहा: ‘ब्रह्मन् ! अब मुझे अपने देश जाने की आज्ञा दीजिये ।’",
+
+                curse_title: "मुनि का भयंकर श्राप",
+                curse_text: "मुनि ने जब विचार किया तो पता चला कि ५७ वर्ष से अधिक समय बीत चुका है। अपनी जीवन भर की तपस्या को नष्ट देखकर क्रोधित होकर उन्होंने श्राप दिया: 'रे पापिनी! तूने मेरा तप नष्ट किया है, जा तू तुरंत पिशाचनी (प्रेत) हो जा!'",
+
+                story_2: "कांपती हुई अप्सरा के क्षमा मांगने पर मुनि ने उसे पापमोचनी एकादशी व्रत का मार्ग बताया। मुनि स्वयं अपने पिता च्यवन ऋषि के पास गए, जिन्होंने उन्हें भी पापमोचनी एकादशी का व्रत कर अपना पाप धोने का कठोर निर्देश दिया।",
+
+                head_3: "मुक्ति और उद्धार",
+                redemption_text: "पिता की आज्ञा मानकर मुनि और अप्सरा दोनों ने पापमोचनी एकादशी का व्रत किया। व्रत के प्रभाव से मुनि के सभी पाप नष्ट हो गए और मंजुघोषा पिशाच योनि से मुक्त होकर पुनः स्वर्गलोक चली गई।",
+                dialogue_2: "श्रीकृष्ण ने कहा: 'हे राजा! जो कोई भी इस एकादशी के बारे में पढ़ता या सुनता है, उसे एक हजार गाय दान करने का पुण्य फल मिलता है।'",
+
+                head_rules: "व्रत के महत्वपूर्ण नियम",
+                rule_1: "व्रत सूर्योदय से प्रारंभ होकर अगले दिन पारण समय तक चलता है।",
+                rule_2: "अनाज, दालें, प्याज, लहसुन आदि का पूर्णतया त्याग करें।",
+                rule_3: "हरे कृष्ण महामंत्र का अधिक से अधिक जप करें और शास्त्रों का पाठ करें।",
+
+                head_notes: "शास्त्रों के अनुसार विशेष बातें",
+                note_1: "१. कामदेव का प्रभाव अत्यंत तीव्र होता है; उन्होंने भगवान शिव की तपस्या भी भंग की थी, जिससे क्रोधित होकर शिवजी ने उन्हें भस्म कर दिया था।",
+                note_2: "२. सांसारिक आकर्षण मनुष्य को उसका लक्ष्य भुला सकता है, जैसे मुनि मेधावी ५७ वर्षों तक अपनी तपस्या भूल गए थे।",
+
+                conclusion_text: "निष्कर्ष: श्रद्धापूर्वक इस पवित्र एकादशी का व्रत करने से सभी घोर पापों से मुक्ति मिलती है और अपार पुण्य की प्राप्ति होती है।"
+            },
+
+            // ================= MARATHI =================
+            mr: {
+                title: "पापमोचनी एकादशी",
+                status_active: "एकादशी उपवास चालू आहे",
+                status_upcoming: "उपवास सुरू होईल",
+                status_ended: "उपवास संपन्न",
+                status_break: "पारण (उपवास सोडा)",
+                lbl_start: "प्रारंभ",
+                lbl_parana: "पारण वेळ",
+
+                head_1: "युधिष्ठिराचा प्रश्न",
+                dialogue_1: "धर्मराज युधिष्ठिर यांनी विचारले: 'हे प्रभू! चैत्र महिन्याच्या कृष्ण पक्षातील एकादशीचे नाव काय आहे? तिची विधी आणि फळ काय आहे? कृपया मला सांगा.'",
+                intro_text: "भगवान श्रीकृष्ण म्हणाले: 'हे राजन! या एकादशीचे नाव <b>पापमोचनी एकादशी</b> आहे. ही सर्व पापांचा नाश करणारी आणि भूत-पिशाच योनीतून मुक्त करणारी आहे. याने जीवन पूर्णपणे पवित्र होते.'",
+
+                head_2: "मुनी मेधावी आणि मंजुघोषा यांची कथा",
+                story_1: "चैत्ररथ नावाच्या वनात मेधावी नावाचे एक महान ऋषी तपस्या करत होते. कामदेवाने त्यांची तपस्या भंग करण्यासाठी मंजुघोषा नावाच्या अत्यंत सुंदर अप्सरेला पाठवले. तिच्या सौंदर्यावर आणि सुमधुर आवाजावर मुनी मोहित झाले आणि त्यांनी आपली सर्व तपस्या सोडून दिली. अनेक दिवस एकत्र राहिल्यानंतर जेव्हा ती स्वर्गात परत जाण्यास निघाली, तेव्हा ती म्हणाली: 'हे ब्रह्मन्! आता मला माझ्या देशी जाण्याची आज्ञा द्या.'",
+
+                curse_title: "मुनींचा भयंकर शाप",
+                curse_text: "५७ वर्षे तिच्यासोबत राहिल्यानंतर जेव्हा मुनींना आपली तपस्या नष्ट झाल्याची जाणीव झाली, तेव्हा ते प्रचंड क्रोधित झाले. त्यांनी शाप दिला: 'हे पापिणी! तू माझी सर्व तपस्या नष्ट केली आहेस, म्हणून तू आत्ताच पिशाच (भूत) होशील!'",
+
+                story_2: "मंजुघोषेने घाबरून क्षमा मागितली. मुनींनी तिला पापमोचनी एकादशीचे व्रत करण्यास सांगितले. मुनी स्वतःचे वडील च्यवन ऋषी यांच्याकडे गेले. वडिलांनीही त्यांना या महापापातून मुक्त होण्यासाठी पापमोचनी एकादशीचे व्रत करण्याचा सल्ला दिला.",
+
+                head_3: "मुक्ती आणि उद्धार",
+                redemption_text: "मुनी मेधावी आणि मंजुघोषा या दोघांनीही श्रद्धेने पापमोचनी एकादशीचे व्रत केले. या व्रताच्या प्रभावाने मुनींची पापे नष्ट झाली आणि मंजुघोषा पिशाच योनीतून मुक्त होऊन पुन्हा स्वर्गात परतली.",
+                dialogue_2: "भगवान श्रीकृष्ण म्हणाले: 'हे युधिष्ठिर! जो व्यक्ती या एकादशीची कथा वाचतो किंवा ऐकतो, त्याला एक हजार गाई दान केल्याचे पुण्य मिळते.'",
+
+                head_rules: "व्रताचे महत्त्वाचे नियम",
+                rule_1: "उपवास एकादशीच्या सूर्योदयापासून सुरू होतो आणि दुसऱ्या दिवशी पारण वेळेपर्यंत चालतो.",
+                rule_2: "अन्न, डाळी, कांदा, लसूण इत्यादींचे सेवन पूर्णपणे टाळावे.",
+                rule_3: "हरे कृष्ण महामंत्राचा जप करावा आणि भगवद्गीतेसारख्या ग्रंथांचे वाचन करावे.",
+
+                head_notes: "शास्त्रांमधील विशेष नोंदी",
+                note_1: "१. कामदेवाचा प्रभाव अत्यंत तीव्र असतो; त्यांनी भगवान शंकरांचीही तपस्या भंग केली होती, ज्यामुळे महादेवाने त्यांना भस्मसात केले.",
+                note_2: "२. भौतिक आकर्षणांमुळे माणूस स्वतःचे ध्येय विसरू शकतो, जसे मुनी मेधावी ५७ वर्षे तपस्या विसरले होते.",
+
+                conclusion_text: "तात्पर्य: या पवित्र एकादशीचे व्रत केल्याने सर्व पापांचा नाश होतो आणि अपार पुण्याची प्राप्ती होते."
+            }
+        };
+
+        // --- FUNCTIONS ---
+        
+        function goBack() {
+            // For Android App usage
+            try {
+                window.location.href = 'go:home'; 
+            } catch(e) {
+                // Fallback for web testing
+                window.history.back();
+            }
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('site_lang') || 'en';
+            let next = 'en';
+            if (current === 'en') next = 'hi';
+            else if (current === 'hi') next = 'mr';
+            else if (current === 'mr') next = 'en';
+
+            localStorage.setItem('site_lang', next);
+            setAppContent();
+        }
+
+        function setAppContent() {
+            // Check localStorage -> if null, default to English
+            let lang = localStorage.getItem('site_lang');
+            if (!lang) {
+                lang = 'en';
+                localStorage.setItem('site_lang', 'en');
+            }
+            
+            // Update Lang Button
+            document.getElementById('lang-indicator').innerText = lang.toUpperCase();
+
+            const data = content[lang];
+            
+            // Text Replacement
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (data[key]) el.innerHTML = data[key];
+            });
+
+            updateStaticTimes(lang);
+            updateTimer(); // Refresh timer labels immediately
+        }
+
+        function updateStaticTimes(lang) {
+            const optionsDate = { month: 'short', day: 'numeric' };
+            const optionsTime = { hour: '2-digit', minute:'2-digit', hour12: false };
+            
+            // Format: 15 Mar, 06:43
+            const startStr = PAPAMOCHANI_TIMES.start.toLocaleDateString('en-GB', optionsDate) + ", " +
+                             PAPAMOCHANI_TIMES.start.toLocaleTimeString('en-US', optionsTime);
+
+            // Format Parana: 06:43 - 09:43
+            const pStart = PAPAMOCHANI_TIMES.paranaStart;
+            const pEnd = PAPAMOCHANI_TIMES.paranaEnd;
+            const paranaStr = 
+                `${String(pStart.getHours()).padStart(2,'0')}:${String(pStart.getMinutes()).padStart(2,'0')} - ${String(pEnd.getHours()).padStart(2,'0')}:${String(pEnd.getMinutes()).padStart(2,'0')}`;
+            
+            document.getElementById('start-time-display').innerText = startStr;
+            document.getElementById('parana-time-display').innerText = paranaStr;
+        }
+
+        function msToTime(duration) {
+            let seconds = Math.floor((duration / 1000) % 60);
+            let minutes = Math.floor((duration / (1000 * 60)) % 60);
+            let hours = Math.floor((duration / (1000 * 60 * 60)));
+
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            return hours + ":" + minutes + ":" + seconds;
+        }
+
+        function updateTimer() {
+            const nowTime = new Date();
+            const start = PAPAMOCHANI_TIMES.start;
+            const end = PAPAMOCHANI_TIMES.end; 
+            const paranaStart = PAPAMOCHANI_TIMES.paranaStart;
+            const paranaEnd = PAPAMOCHANI_TIMES.paranaEnd;
+
+            const lang = localStorage.getItem('site_lang') || 'en';
+            const data = content[lang];
+
+            let displayTime = "";
+            let percent = 0;
+            let barColor = "var(--red-timer)";
+            let statusLabel = "";
+            let timeColor = "var(--text-dark)";
+
+            if (nowTime < start) {
+                // UPCOMING
+                const diff = start - nowTime;
+                displayTime = msToTime(diff);
+                percent = 0;
+                statusLabel = data.status_upcoming;
+                barColor = "#F39C12"; 
+            } 
+            else if (nowTime >= start && nowTime < paranaStart) {
+                // ACTIVE FASTING
+                const diff = paranaStart - nowTime; // Counting down to Parana
+                displayTime = msToTime(diff);
+                
+                const totalDuration = paranaStart - start;
+                const elapsed = nowTime - start;
+                percent = (elapsed / totalDuration) * 100;
+                
+                statusLabel = data.status_active;
+                barColor = "#C0392B"; 
+            } 
+            else if (nowTime >= paranaStart && nowTime < paranaEnd) {
+                // PARANA TIME
+                const diff = paranaEnd - nowTime;
+                displayTime = msToTime(diff);
+                percent = 100;
+                statusLabel = data.status_break;
+                barColor = "#27AE60";
+                timeColor = "#27AE60"; // Green text
+            } 
+            else {
+                // ENDED
+                displayTime = "00:00:00";
+                percent = 100;
+                statusLabel = data.status_ended;
+                barColor = "#7f8c8d"; 
+            }
+
+            document.getElementById('countdown-display').innerText = displayTime;
+            document.getElementById('countdown-display').style.color = timeColor;
+            document.getElementById('progress-fill').style.width = percent + "%";
+            document.getElementById('progress-fill').style.backgroundColor = barColor;
+            document.getElementById('fast-status-text').innerText = statusLabel;
+            document.getElementById('timer-label-text').innerText = (nowTime >= paranaStart && nowTime < paranaEnd) ? "Time Left to Break Fast" : "Time Remaining";
+        }
+
+        // Initialize
+        setAppContent();
+        setInterval(updateTimer, 1000);
+
+    </script>
+</body>
+</html>

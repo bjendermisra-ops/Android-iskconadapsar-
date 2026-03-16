@@ -26,7 +26,7 @@
             theme: {
                 extend: {
                     colors: { saffron: '#FF9933', deep: '#050505', darkCard: '#1a1a1a' },
-                    fontFamily: { sans: ['Outfit', 'sans-serif'], serif: ['Cinzel', 'serif'] },
+                    fontFamily: { sans:['Outfit', 'sans-serif'], serif: ['Cinzel', 'serif'] },
                     animation: { 'fade-in': 'fadeIn 0.3s ease-out', 'float': 'float 3s ease-in-out infinite' },
                     keyframes: { 
                         fadeIn: { '0%': { opacity: '0', transform: 'scale(0.98)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
@@ -40,17 +40,31 @@
     <style>
         body { background-color: #000; color: white; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; transition: background 0.5s ease;}
         
-        /* Fixed Background Art */
+        /* 100% Device Fit Background Art (High Opacity for Vibrant Look) */
         .bg-fixed-art {
-            position: fixed; inset: 0; z-index: -1;
-            background-size: cover; background-position: center; opacity: 0.15;
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            z-index: -2;
+            background-size: cover; 
+            background-position: center center; 
+            background-repeat: no-repeat;
+            opacity: 0.85; /* Vibrant and Bright! */
             transition: background-image 0.5s ease-in-out;
+        }
+
+        /* Vignette Overlay for Text Readability */
+        .vignette-overlay {
+            position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -1;
+            /* Dark at edges, transparent in the middle */
+            background: radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%);
+            pointer-events: none;
         }
 
         /* Mobile Container Constraint for Desktop */
         .app-layout { 
             height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
-            width: 100%; max-width: 500px; margin: 0 auto; background: rgba(0,0,0,0.2); 
+            width: 100%; max-width: 500px; margin: 0 auto;
             border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
             transition: all 0.5s ease;
         }
@@ -67,7 +81,7 @@
         
         /* Focus Mode Classes */
         body.focus-mode .hide-in-focus { opacity: 0; pointer-events: none; height: 0; margin: 0; padding: 0; overflow: hidden; transition: all 0.3s ease; }
-        body.focus-mode .bg-fixed-art { opacity: 0.05; }
+        body.focus-mode .bg-fixed-art { opacity: 0.15; } /* Dim background in focus mode */
         body.focus-mode .focus-expand { flex: 1; display: flex; flex-direction: column; justify-content: center; transform: scale(1.05); transition: transform 0.5s ease; }
         
         /* Utilities */
@@ -76,24 +90,31 @@
 
         /* Badges Styling */
         .badge-glow { box-shadow: 0 0 15px rgba(255, 153, 51, 0.4); }
+
+        /* Strong Text Shadow for High-Visibility */
+        .text-strong-shadow {
+            text-shadow: 0px 2px 8px rgba(0,0,0,0.9);
+        }
     </style>
 </head>
 <body>
     
+    <!-- Vibrant Background & Smart Vignette -->
     <div id="bgArt" class="bg-fixed-art"></div>
+    <div class="vignette-overlay"></div>
 
     <div class="app-layout" id="appLayout">
         
         <!-- HEADER -->
-        <header id="mainHeader" class="hide-in-focus flex justify-between items-center px-5 py-4 bg-black/60 backdrop-blur-md border-b border-white/10 z-20">
+        <header id="mainHeader" class="hide-in-focus flex justify-between items-center px-5 py-4 bg-black/40 backdrop-blur-md border-b border-white/10 z-20">
             <div class="flex items-center gap-4">
-                <a href="index.html" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-saffron border border-white/10 active:scale-95 transition">
+                <a href="index.html" class="w-9 h-9 rounded-full bg-black/40 flex items-center justify-center text-saffron border border-white/10 active:scale-95 transition">
                     <i class="fas fa-chevron-left"></i>
                 </a>
                 
                 <div>
-                    <h1 class="font-serif text-saffron font-bold text-sm tracking-widest">JAPA SADHANA</h1>
-                    <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                    <h1 class="font-serif text-saffron font-bold text-sm tracking-widest text-strong-shadow">JAPA SADHANA</h1>
+                    <div class="flex items-center gap-1.5 text-[10px] text-gray-300 font-medium text-strong-shadow">
                         <i class="fas fa-fire text-orange-500"></i>
                         <span id="streakDisplay">0 Day Streak</span>
                     </div>
@@ -101,15 +122,15 @@
             </div>
             <div class="flex gap-4 items-center">
                 <button onclick="toggleFocusMode()" class="text-green-400 hover:text-green-300 transition transform active:scale-90" aria-label="Focus Mode">
-                    <i class="fas fa-eye text-xl"></i>
+                    <i class="fas fa-eye text-xl drop-shadow-md"></i>
                 </button>
-                <button onclick="openHistory()" class="text-gray-300 hover:text-saffron transition transform active:scale-90" aria-label="History"><i class="fas fa-history text-xl"></i></button>
-                <button onclick="openSettings()" class="text-gray-300 hover:text-saffron transition transform active:scale-90" aria-label="Settings"><i class="fas fa-cog text-xl"></i></button>
+                <button onclick="openHistory()" class="text-gray-200 hover:text-saffron transition transform active:scale-90" aria-label="History"><i class="fas fa-history text-xl drop-shadow-md"></i></button>
+                <button onclick="openSettings()" class="text-gray-200 hover:text-saffron transition transform active:scale-90" aria-label="Settings"><i class="fas fa-cog text-xl drop-shadow-md"></i></button>
             </div>
         </header>
 
-        <!-- FOCUS MODE EXIT BUTTON (Hidden by default) -->
-        <button id="exitFocusBtn" onclick="toggleFocusMode()" class="hidden absolute top-6 right-6 z-50 bg-white/10 border border-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-md">
+        <!-- FOCUS MODE EXIT BUTTON -->
+        <button id="exitFocusBtn" onclick="toggleFocusMode()" class="hidden absolute top-6 right-6 z-50 bg-black/50 border border-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center backdrop-blur-md">
             <i class="fas fa-times"></i>
         </button>
 
@@ -118,79 +139,80 @@
             
             <!-- Stats Cards -->
             <div class="grid grid-cols-2 gap-3 w-full mb-6 hide-in-focus">
-                <!-- Round Counter with New Manual Entry Button -->
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center shadow-lg relative">
-                    <!-- NEW: Add Physical Bag Rounds Button -->
-                    <button onclick="openModal('manualMalaModal')" class="absolute top-2 right-2 text-[10px] bg-saffron/10 text-saffron border border-saffron/30 rounded px-1.5 py-0.5 hover:bg-saffron hover:text-black transition flex items-center gap-1">
+                <!-- Round Counter with Manual Entry Button -->
+                <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center shadow-lg relative">
+                    <button onclick="openModal('manualMalaModal')" class="absolute top-2 right-2 text-[10px] bg-saffron/20 text-saffron border border-saffron/50 rounded px-1.5 py-0.5 hover:bg-saffron hover:text-black transition flex items-center gap-1">
                         <i class="fas fa-plus"></i> Bag
                     </button>
                     
-                    <span class="text-[9px] text-gray-400 uppercase tracking-widest font-bold mt-1">Rounds Today</span>
+                    <span class="text-[9px] text-gray-300 uppercase tracking-widest font-bold mt-1 text-strong-shadow">Rounds Today</span>
                     <div class="flex items-baseline gap-1 mt-1">
-                        <span id="roundsDisplay" class="text-3xl font-bold text-white">0</span>
-                        <span id="targetDisplay" class="text-sm font-bold text-saffron opacity-80">/ 16</span>
+                        <span id="roundsDisplay" class="text-3xl font-bold text-white text-strong-shadow">0</span>
+                        <span id="targetDisplay" class="text-sm font-bold text-saffron opacity-90 text-strong-shadow">/ 16</span>
                     </div>
                 </div>
                 
                 <!-- Timer Card -->
-                <div class="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center relative shadow-lg group">
-                    <span class="text-[9px] text-gray-400 uppercase tracking-widest font-bold z-10">Time</span>
-                    <div id="timerDisplay" class="text-2xl font-mono text-saffron font-bold z-10 mt-1">00:00</div>
+                <div class="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center relative shadow-lg group">
+                    <span class="text-[9px] text-gray-300 uppercase tracking-widest font-bold z-10 text-strong-shadow">Time</span>
+                    <div id="timerDisplay" class="text-2xl font-mono text-saffron font-bold z-10 mt-1 text-strong-shadow">00:00</div>
                     <button onclick="toggleTimer()" class="absolute inset-0 z-20 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl">
                         <i id="timerIcon" class="fas fa-pause text-white text-xl"></i>
                     </button>
-                    <div id="timerDot" class="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-green-500 hidden animate-pulse"></div>
+                    <div id="timerDot" class="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-green-400 hidden animate-pulse shadow-[0_0_8px_rgba(74,222,128,1)]"></div>
                 </div>
             </div>
 
             <!-- DIGITAL BEAD COUNTER -->
             <div class="relative w-[280px] h-[280px] flex items-center justify-center mb-6 mt-2">
                 <!-- SVG Ring -->
-                <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_15px_rgba(255,153,51,0.2)]">
-                    <circle class="text-white/5" stroke-width="12" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
+                <svg class="absolute inset-0 w-full h-full pointer-events-none drop-shadow-[0_0_15px_rgba(255,153,51,0.5)]">
+                    <circle class="text-white/10" stroke-width="12" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
                     <circle id="progressRing" class="ring-progress text-saffron" stroke-width="12" stroke-dasharray="785" stroke-dashoffset="785" stroke-linecap="round" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
                 </svg>
 
-                <!-- Tap Button (Core Interaction) -->
+                <!-- Tap Button (Now with much lower dark overlay so the theme pops out!) -->
                 <button id="tapBtn" onmousedown="handleTap()" ontouchstart="handleTap(event)" 
-                    class="relative w-[215px] h-[215px] rounded-full border-[6px] border-[#222] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center z-20 transition-all duration-75 overflow-hidden bg-cover bg-center group active:scale-95">
+                    class="relative w-[215px] h-[215px] rounded-full border-[6px] border-[#222] shadow-[0_0_30px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center z-20 transition-all duration-75 overflow-hidden bg-cover bg-center bg-no-repeat group active:scale-95">
                     
-                    <div class="absolute inset-0 bg-black/50 group-active:bg-black/40 transition duration-200"></div>
-                    <span id="beadCount" class="relative z-10 text-[5rem] font-bold leading-none text-white drop-shadow-2xl select-none">0</span>
-                    <span class="relative z-10 text-[11px] text-saffron tracking-[4px] font-bold mt-2 select-none drop-shadow-lg">MANTRA</span>
+                    <!-- Dims image only 20% instead of 50% for HD Clarity -->
+                    <div class="absolute inset-0 bg-black/20 group-active:bg-black/40 transition duration-200"></div>
+                    
+                    <span id="beadCount" class="relative z-10 text-[5rem] font-bold leading-none text-white text-strong-shadow select-none">0</span>
+                    <span class="relative z-10 text-[11px] text-saffron tracking-[4px] font-bold mt-2 select-none text-strong-shadow">MANTRA</span>
                 </button>
             </div>
 
             <!-- Mantra Text -->
-            <div class="text-center space-y-1 opacity-90 mb-4">
-                <h3 class="text-saffron font-bold text-sm md:text-base font-serif uppercase tracking-wider drop-shadow-md">Hare Krishna Hare Krishna</h3>
-                <p class="text-[10px] md:text-xs text-gray-300 font-sans tracking-wide drop-shadow-md">Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare</p>
+            <div class="text-center space-y-1 opacity-100 mb-4">
+                <h3 class="text-saffron font-bold text-sm md:text-base font-serif uppercase tracking-wider text-strong-shadow">Hare Krishna Hare Krishna</h3>
+                <p class="text-[10px] md:text-xs text-white font-sans tracking-wide text-strong-shadow font-medium">Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare</p>
             </div>
 
             <!-- Daily Quote -->
-            <div class="hide-in-focus mt-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-center backdrop-blur-sm max-w-[90%] mx-auto">
-                <i class="fas fa-quote-left text-saffron/50 text-xs mb-1"></i>
-                <p id="dailyQuote" class="text-[11px] text-gray-300 italic font-serif leading-relaxed"></p>
+            <div class="hide-in-focus mt-2 px-6 py-3 bg-black/40 border border-white/10 rounded-xl text-center backdrop-blur-md max-w-[90%] mx-auto shadow-lg">
+                <i class="fas fa-quote-left text-saffron/80 text-xs mb-1 drop-shadow-md"></i>
+                <p id="dailyQuote" class="text-[11px] text-gray-200 italic font-serif leading-relaxed text-strong-shadow"></p>
             </div>
 
         </main>
 
         <!-- FOOTER MENU -->
-        <footer id="mainFooter" class="hide-in-focus bg-[#080808] border-t border-white/5 p-3 pb-6 z-20">
+        <footer id="mainFooter" class="hide-in-focus bg-black/80 backdrop-blur-md border-t border-white/10 p-3 pb-6 z-20">
             <div class="flex justify-around items-center max-w-sm mx-auto">
                 <button onclick="toggleAudio()" id="audioBtn" class="flex flex-col items-center gap-1 group w-16">
-                    <i class="fas fa-music text-lg text-gray-500 group-hover:text-saffron transition"></i>
-                    <span class="text-[9px] text-gray-500">Audio</span>
+                    <i class="fas fa-music text-lg text-gray-400 group-hover:text-saffron transition"></i>
+                    <span class="text-[9px] text-gray-400">Audio</span>
                 </button>
                 <button onclick="resetBeads()" class="flex flex-col items-center gap-1 group w-16">
-                    <i class="fas fa-undo text-lg text-gray-500 group-hover:text-red-500 transition"></i>
-                    <span class="text-[9px] text-gray-500">Reset</span>
+                    <i class="fas fa-undo text-lg text-gray-400 group-hover:text-red-500 transition"></i>
+                    <span class="text-[9px] text-gray-400">Reset</span>
                 </button>
-                <!-- UPDATED SHARE SYSTEM -->
+                <!-- SHARE SYSTEM -->
                 <button onclick="shareProgress()" class="flex flex-col items-center gap-1 group w-16 relative">
                     <div class="absolute -top-1 -right-1 bg-green-500 w-2 h-2 rounded-full animate-ping"></div>
-                    <i class="fas fa-share-alt text-lg text-green-500 group-hover:text-green-400 transition"></i>
-                    <span class="text-[9px] text-green-500 font-bold tracking-wider">Report</span>
+                    <i class="fas fa-share-alt text-lg text-green-400 group-hover:text-green-300 transition"></i>
+                    <span class="text-[9px] text-green-400 font-bold tracking-wider">Report</span>
                 </button>
             </div>
         </footer>
@@ -199,30 +221,30 @@
 
     <!-- ===== MODALS ===== -->
 
-    <!-- NEW: MANUAL MALA ENTRY MODAL -->
-    <div id="manualMalaModal" class="hidden fixed inset-0 z-[70] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
-        <div class="bg-darkCard border border-white/10 w-full max-w-xs rounded-3xl p-6 text-center relative shadow-2xl">
+    <!-- MANUAL MALA ENTRY MODAL -->
+    <div id="manualMalaModal" class="hidden fixed inset-0 z-[70] bg-black/95 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+        <div class="bg-darkCard border border-white/10 w-full max-w-xs rounded-3xl p-6 text-center relative shadow-[0_0_40px_rgba(0,0,0,1)]">
             <button onclick="closeModal('manualMalaModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
-            <i class="fas fa-praying-hands text-4xl text-saffron mb-3"></i>
+            <i class="fas fa-praying-hands text-4xl text-saffron mb-3 drop-shadow-lg"></i>
             <h2 class="text-xl text-white font-serif font-bold mb-1">Add Physical Rounds</h2>
             <p class="text-[10px] text-gray-400 mb-5 leading-relaxed">Enter the number of rounds you chanted manually on your Tulasi Japa Mala (Bead Bag).</p>
             
-            <input type="number" id="manualMalaInput" min="1" placeholder="e.g. 4" class="w-full bg-black/50 border border-white/20 rounded-xl py-3.5 px-4 text-center text-xl text-white font-bold focus:border-saffron outline-none mb-4">
+            <input type="number" id="manualMalaInput" min="1" placeholder="e.g. 4" class="w-full bg-black/80 border border-white/20 rounded-xl py-3.5 px-4 text-center text-xl text-white font-bold focus:border-saffron outline-none mb-4">
             
             <button onclick="addManualRounds()" class="w-full bg-saffron text-black font-bold py-3.5 rounded-xl hover:bg-orange-500 transition shadow-[0_0_15px_rgba(255,153,51,0.4)]">Save & Update Stats</button>
         </div>
     </div>
 
-    <!-- SETTINGS -->
-    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-        <div class="bg-darkCard w-full max-w-sm rounded-3xl border border-white/10 p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scroll">
-            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            <h2 class="text-saffron font-serif text-xl mb-6">Settings & Themes</h2>
+    <!-- SETTINGS & THEMES MODAL -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+        <div class="bg-darkCard w-full max-w-md rounded-3xl border border-white/10 p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto hide-scroll">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white z-10 w-8 h-8 rounded-full bg-black/50 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            
+            <h2 class="text-saffron font-serif text-xl mb-4 border-b border-white/10 pb-3"><i class="fas fa-paint-brush mr-2"></i>Divine Themes</h2>
 
-            <!-- Divine Themes -->
+            <!-- Premium Divine Themes UI (Grid of Cards) -->
             <div class="mb-6">
-                <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2 block">Divine Theme</label>
-                <div class="grid grid-cols-4 gap-2" id="themeSelector">
+                <div class="grid grid-cols-2 gap-3" id="themeSelector">
                     <!-- Populated via JS -->
                 </div>
             </div>
@@ -230,40 +252,40 @@
             <div class="mb-6 border-t border-white/10 pt-5">
                 <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2 block">Set Daily Goal</label>
                 <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="setTargetInput(16)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">16</button>
-                    <button onclick="setTargetInput(32)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">32</button>
-                    <button onclick="setTargetInput(64)" class="py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">64</button>
+                    <button onclick="setTargetInput(16)" class="py-2 rounded-lg bg-black/50 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">16</button>
+                    <button onclick="setTargetInput(32)" class="py-2 rounded-lg bg-black/50 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">32</button>
+                    <button onclick="setTargetInput(64)" class="py-2 rounded-lg bg-black/50 border border-white/10 text-xs font-bold hover:border-saffron hover:bg-white/10 transition">64</button>
                 </div>
-                <input type="number" id="customTargetInput" placeholder="Custom Target" class="w-full bg-black border border-white/20 rounded-lg py-3 px-4 text-sm text-white focus:border-saffron outline-none">
+                <input type="number" id="customTargetInput" placeholder="Custom Target" class="w-full bg-black/80 border border-white/20 rounded-lg py-3 px-4 text-sm text-white focus:border-saffron outline-none">
             </div>
 
             <div class="space-y-4 border-t border-white/10 pt-5">
                 <!-- Toggles -->
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-300">Click Sound</span>
+                <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg">
+                    <span class="text-sm text-gray-300"><i class="fas fa-volume-up mr-2 text-gray-500"></i>Click Sound</span>
                     <input type="checkbox" id="soundToggle" class="w-5 h-5 accent-saffron">
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-300">Haptic Vibration</span>
+                <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg">
+                    <span class="text-sm text-gray-300"><i class="fas fa-mobile-alt mr-2 text-gray-500"></i>Haptic Vibration</span>
                     <input type="checkbox" id="vibToggle" class="w-5 h-5 accent-saffron">
                 </div>
                 
                 <!-- Notification Logic -->
-                <div class="bg-white/5 p-3 rounded-lg border border-white/5 mt-2">
-                    <div class="flex justify-between items-center mb-2">
+                <div class="bg-black/40 p-3 rounded-lg border border-white/5 mt-2">
+                    <div class="flex justify-between items-center mb-3">
                         <div class="flex flex-col">
-                            <span class="text-sm text-gray-300">Daily Reminders</span>
-                            <span class="text-[9px] text-gray-500">Notifications if inactive</span>
+                            <span class="text-sm text-gray-300"><i class="fas fa-bell mr-2 text-gray-500"></i>Reminders</span>
+                            <span class="text-[9px] text-gray-500 mt-1">Get alerts if inactive</span>
                         </div>
                         <input type="checkbox" id="notifyToggle" onchange="requestNotificationPermission()" class="w-5 h-5 accent-saffron">
                     </div>
-                    <button onclick="triggerTestNotification()" class="w-full py-1.5 bg-gray-800 text-saffron text-[10px] rounded hover:bg-gray-700 transition">
-                        <i class="fas fa-bell mr-1"></i> Send Test Alert
+                    <button onclick="triggerTestNotification()" class="w-full py-2 bg-white/5 text-saffron text-[10px] uppercase font-bold tracking-widest rounded hover:bg-white/10 transition border border-white/5">
+                        Test Alert
                     </button>
                 </div>
             </div>
 
-            <button onclick="saveSettings()" class="w-full mt-6 bg-saffron text-black font-bold py-3.5 rounded-xl hover:bg-orange-500 transition shadow-[0_0_15px_rgba(255,153,51,0.3)]">Save & Close</button>
+            <button onclick="saveSettings()" class="w-full mt-6 bg-gradient-to-r from-saffron to-orange-500 text-black font-bold py-3.5 rounded-xl hover:scale-105 transition shadow-[0_0_15px_rgba(255,153,51,0.4)]">Save & Close</button>
         </div>
     </div>
 
@@ -278,13 +300,13 @@
             <div class="flex-1 overflow-y-auto hide-scroll pb-6">
                 <!-- Stats Overview -->
                 <div class="grid grid-cols-2 gap-4 p-5 bg-[#151515] border-b border-white/5">
-                    <div class="text-center bg-black/40 rounded-xl p-3 border border-white/5">
+                    <div class="text-center bg-black/40 rounded-xl p-3 border border-white/5 shadow-inner">
                         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Total Rounds</div>
-                        <div id="histTotalRounds" class="text-3xl font-bold text-saffron mt-1">0</div>
+                        <div id="histTotalRounds" class="text-3xl font-bold text-saffron mt-1 drop-shadow-md">0</div>
                     </div>
-                    <div class="text-center bg-black/40 rounded-xl p-3 border border-white/5">
+                    <div class="text-center bg-black/40 rounded-xl p-3 border border-white/5 shadow-inner">
                         <div class="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Best Score</div>
-                        <div id="histBestDay" class="text-3xl font-bold text-white mt-1">0</div>
+                        <div id="histBestDay" class="text-3xl font-bold text-white mt-1 drop-shadow-md">0</div>
                     </div>
                 </div>
 
@@ -308,8 +330,9 @@
                 <div class="p-5">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Detailed Logs</h3>
-                        <div class="flex gap-2 text-[9px] text-gray-500 font-bold uppercase">
+                        <div class="flex gap-2 text-[9px] text-gray-500 font-bold uppercase bg-black/30 px-2 py-1 rounded">
                             <span><i class="fas fa-mobile-alt text-blue-400 mr-1"></i>Digital</span>
+                            <span class="opacity-50">|</span>
                             <span><i class="fas fa-praying-hands text-orange-400 mr-1"></i>Mala</span>
                         </div>
                     </div>
@@ -322,16 +345,14 @@
     </div>
 
     <!-- CELEBRATION (Round Complete) -->
-    <div id="celebrationModal" class="hidden fixed inset-0 z-[60] bg-black/90 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
-        <div class="bg-darkCard border-2 border-saffron w-full max-w-xs rounded-2xl p-8 text-center relative shadow-[0_0_50px_rgba(255,153,51,0.2)] transform scale-100">
-            <div class="absolute inset-0 bg-[url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg')] opacity-10 bg-cover bg-center rounded-2xl pointer-events-none"></div>
-            
-            <i class="fas fa-check-circle text-5xl text-saffron mb-4 animate-bounce relative z-10"></i>
+    <div id="celebrationModal" class="hidden fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex items-center justify-center p-6 animate-fade-in">
+        <div class="bg-darkCard border-2 border-saffron w-full max-w-xs rounded-2xl p-8 text-center relative shadow-[0_0_80px_rgba(255,153,51,0.3)] transform scale-100">
+            <i class="fas fa-check-circle text-6xl text-saffron mb-4 animate-bounce relative z-10 drop-shadow-[0_0_15px_rgba(255,153,51,0.8)]"></i>
             <h2 class="text-2xl text-white font-serif font-bold mb-1 relative z-10">Round Complete!</h2>
             <p class="text-xs text-gray-400 mb-6 italic relative z-10">"Chant Hare Krishna and be Happy"</p>
             
             <div class="bg-black/60 rounded-xl p-4 mb-6 border border-white/10 relative z-10 backdrop-blur-md">
-                <div class="flex justify-between text-xs text-gray-300 mb-2"><span>Completed</span><span id="celRoundNum" class="text-saffron font-bold text-sm">1</span></div>
+                <div class="flex justify-between text-xs text-gray-300 mb-2"><span>Completed</span><span id="celRoundNum" class="text-saffron font-bold text-sm bg-saffron/10 px-2 rounded">1</span></div>
                 <div class="flex justify-between text-xs text-gray-300"><span>Time Taken</span><span id="celTime" class="text-white font-mono bg-white/10 px-2 py-0.5 rounded">00:00</span></div>
             </div>
             <button onclick="startNextRound()" class="w-full bg-gradient-to-r from-saffron to-orange-500 text-black font-bold py-3.5 rounded-xl hover:scale-105 transition shadow-lg relative z-10 text-sm tracking-wide">Start Next Round</button>
@@ -349,12 +370,17 @@
         const MAX_BEADS = 108;
         const RING_CIRCUMFERENCE = 785; 
         
-        // Next-Level Themes Data
+        // 🌟 8 HIGH-QUALITY PREMIUM THEMES 🌟
+        // They are all high resolution. Background is used for the app body, Bead is used for the button.
         const THEMES =[
-            { id: 'default', name: 'Classic', bg: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2zqiTZ78j6B7tqYFh5Cd-agJGzRJLOLARjfgZWNDzH9YjzEJ53lN8uveWFnvniWz58inZsgDc0aZdk5Feaddu14G9hoHnEOmUPb1_3ZdkT8ShL2PWpUe_sgf-EiNU4nWqD7X9ayVkkxa_Rpw5HpmP2qXLrAb74siFSirEj_a5C8Qk1oZGTq1yrgJqQ60/s1280/maxresdefault%20(2).jpg', bead: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7gXfbHOlV_6XouK6kyFNhyVnbvbCJigrbTLKg5V8Kqrn7Qkq8C3-m-lCLSwy7U3K92G5-uCDJ_dwWkXWEx8uAgGlwbXAsXJqAgikyeqck7JVeocEqP3M3JlqCXrClXqJ7IkKCK_z_E9E7Y7V0_6PryqLfqOkZCNKDPlaQDrx-P_Jz/s1600/bead.jpg' },
-            { id: 'prabhupada', name: 'Prabhupada', bg: 'https://vedabase.io/media/images/srila-prabhupada-1.max-1200x900.jpg', bead: 'https://vedabase.io/media/images/srila-prabhupada-1.max-400x400.jpg' },
-            { id: 'krishna', name: 'Krishna', bg: 'https://e1.pxfuel.com/backgrounds/290/69/desktop-wallpaper-shri-krishna-radha-krishna-dark.jpg', bead: 'https://e1.pxfuel.com/backgrounds/290/69/desktop-wallpaper-shri-krishna-radha-krishna-dark.jpg' },
-            { id: 'jagannath', name: 'Jagannath', bg: 'https://w0.peakpx.com/wallpaper/777/239/HD-wallpaper-jai-jagannath-dark-god-hindu.jpg', bead: 'https://w0.peakpx.com/wallpaper/777/239/HD-wallpaper-jai-jagannath-dark-god-hindu.jpg' }
+            { id: 'classic', name: 'Classic Japa', bg: 'https://images.unsplash.com/photo-1604580864964-0462f5d5b1a8?q=80&w=1080&auto=format&fit=crop', bead: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi7gXfbHOlV_6XouK6kyFNhyVnbvbCJigrbTLKg5V8Kqrn7Qkq8C3-m-lCLSwy7U3K92G5-uCDJ_dwWkXWEx8uAgGlwbXAsXJqAgikyeqck7JVeocEqP3M3JlqCXrClXqJ7IkKCK_z_E9E7Y7V0_6PryqLfqOkZCNKDPlaQDrx-P_Jz/s1600/bead.jpg' },
+            { id: 'prabhupada', name: 'Prabhupada', bg: 'https://iskconnews.org/wp-content/uploads/2021/11/srila-prabhupada-2-1024x768.jpg', bead: 'https://vedabase.io/media/images/srila-prabhupada-1.max-400x400.jpg' },
+            { id: 'radhakrishna', name: 'Radha Krishna', bg: 'https://w0.peakpx.com/wallpaper/124/852/HD-wallpaper-iskcon-radha-krishna.jpg', bead: 'https://w0.peakpx.com/wallpaper/124/852/HD-wallpaper-iskcon-radha-krishna.jpg' },
+            { id: 'jagannath', name: 'Lord Jagannath', bg: 'https://w0.peakpx.com/wallpaper/777/239/HD-wallpaper-jai-jagannath-dark-god-hindu.jpg', bead: 'https://w0.peakpx.com/wallpaper/777/239/HD-wallpaper-jai-jagannath-dark-god-hindu.jpg' },
+            { id: 'narasimha', name: 'Narasimhadeva', bg: 'https://w0.peakpx.com/wallpaper/144/22/HD-wallpaper-lord-narasimha-swamy-hindu-god-narsingh.jpg', bead: 'https://w0.peakpx.com/wallpaper/144/22/HD-wallpaper-lord-narasimha-swamy-hindu-god-narsingh.jpg' },
+            { id: 'panchatattva', name: 'Pancha Tattva', bg: 'https://w0.peakpx.com/wallpaper/843/725/HD-wallpaper-pancha-tattva-maha-mantra.jpg', bead: 'https://w0.peakpx.com/wallpaper/843/725/HD-wallpaper-pancha-tattva-maha-mantra.jpg' },
+            { id: 'krishnaflute', name: 'Divine Flute', bg: 'https://w0.peakpx.com/wallpaper/403/941/HD-wallpaper-krishna-flute-feather-god.jpg', bead: 'https://w0.peakpx.com/wallpaper/403/941/HD-wallpaper-krishna-flute-feather-god.jpg' },
+            { id: 'vrindavan', name: 'Vrindavan Dham', bg: 'https://w0.peakpx.com/wallpaper/880/285/HD-wallpaper-vrindavan-forest-cow-flute-krishna-peacock-radha-river-trees.jpg', bead: 'https://w0.peakpx.com/wallpaper/880/285/HD-wallpaper-vrindavan-forest-cow-flute-krishna-peacock-radha-river-trees.jpg' }
         ];
 
         // Spiritual Quotes
@@ -373,7 +399,7 @@
             target: 16,
             timer: { running: false, elapsed: 0 },
             history: {}, 
-            settings: { sound: true, vib: true, notify: false, theme: 'default' },
+            settings: { sound: true, vib: true, notify: false, theme: 'classic' }, // Default changed to 'classic' string to match new IDs
             streak: 0,
             lastActivity: Date.now()
         };
@@ -449,7 +475,7 @@
                 time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
                 duration: formatTime(state.timer.elapsed),
                 roundNum: state.roundsToday,
-                type: 'digital' // Tagged as Digital
+                type: 'digital'
             });
 
             triggerHaptic(200);
@@ -476,7 +502,7 @@
         }
 
         /* ========================
-           NEW: MANUAL BEAD BAG LOGIC
+           MANUAL BEAD BAG LOGIC
            ======================== */
         function addManualRounds() {
             const inputVal = document.getElementById('manualMalaInput').value;
@@ -490,25 +516,23 @@
             const today = new Date().toISOString().split('T')[0];
             if(!state.history[today]) state.history[today] =[];
 
-            // Add each manual round into history for accurate charting and logging
             for(let i=0; i<count; i++) {
                 state.roundsToday++;
                 state.history[today].push({
                     time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-                    duration: 'Bead Bag', // Visual text flag
+                    duration: 'Bead Bag', 
                     roundNum: state.roundsToday,
-                    type: 'manual' // Tagged as Manual
+                    type: 'manual' 
                 });
             }
 
             triggerHaptic(100);
             closeModal('manualMalaModal');
-            document.getElementById('manualMalaInput').value = ''; // Reset input
+            document.getElementById('manualMalaInput').value = ''; 
             
             saveData();
             updateUI();
             
-            // Notification toast for Sketchware/Browser
             triggerNativeNotification(`Successfully added ${count} Bead Bag rounds!`);
         }
 
@@ -539,9 +563,18 @@
             const container = document.getElementById('themeSelector');
             container.innerHTML = '';
             THEMES.forEach(t => {
+                const isActive = state.settings.theme === t.id;
                 const btn = document.createElement('button');
-                btn.className = `w-full aspect-square rounded-lg bg-cover bg-center border-2 overflow-hidden transition ${state.settings.theme === t.id ? 'border-saffron scale-105 shadow-[0_0_10px_rgba(255,153,51,0.5)]' : 'border-white/10 opacity-70 hover:opacity-100'}`;
-                btn.style.backgroundImage = `url('${t.bead}')`;
+                // Updated Premium Card style for Theme Selection
+                btn.className = `relative w-full h-24 rounded-xl bg-cover bg-center border-2 overflow-hidden transition ${isActive ? 'border-saffron scale-105 shadow-[0_0_15px_rgba(255,153,51,0.6)] z-10' : 'border-white/10 opacity-70 hover:opacity-100'}`;
+                btn.style.backgroundImage = `url('${t.bg}')`; // Show background image in preview
+                
+                btn.innerHTML = `
+                    <div class="absolute inset-0 bg-black/40 flex items-end justify-center pb-2 transition duration-300 ${isActive ? 'bg-black/20' : ''}">
+                        <span class="text-white text-[11px] font-bold tracking-wider drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">${t.name}</span>
+                    </div>
+                    ${isActive ? '<div class="absolute top-1.5 right-1.5 bg-saffron text-black rounded-full w-5 h-5 flex items-center justify-center shadow-lg"><i class="fas fa-check text-[10px]"></i></div>' : ''}
+                `;
                 btn.onclick = () => selectTheme(t.id);
                 container.appendChild(btn);
             });
@@ -550,8 +583,9 @@
         function selectTheme(id) {
             state.settings.theme = id;
             applyTheme(id);
-            initThemesUI(); 
+            initThemesUI(); // Refresh UI to show selected tick
             saveData();
+            triggerHaptic(20);
         }
 
         function applyTheme(id) {
@@ -636,7 +670,7 @@
             let totalLifetimeRounds = 0;
             let bestDay = 0;
             
-            const last7Days = [];
+            const last7Days =[];
             const last7Counts =[];
             for(let i=6; i>=0; i--) {
                 const d = new Date();
@@ -675,7 +709,6 @@
                         <div class="history-details bg-[#111] text-xs">
                             <div class="p-3 space-y-1.5 border-t border-white/5">
                                 ${rounds.map((r, i) => {
-                                    // Visual separation logic
                                     const isManual = r.type === 'manual';
                                     const icon = isManual ? '<i class="fas fa-praying-hands text-orange-400 mr-1"></i>' : '<i class="fas fa-mobile-alt text-blue-400 mr-1"></i>';
                                     const durationDisplay = isManual ? `<span class="text-orange-400 font-bold bg-orange-400/10 px-2 py-0.5 rounded text-[10px]">${icon}Bag</span>` : `<span class="font-mono text-gray-300 bg-white/5 px-2 py-0.5 rounded text-[10px]">${icon}${r.duration}</span>`;
@@ -755,7 +788,8 @@
             if(raw) {
                 const data = JSON.parse(raw);
                 state = { ...state, ...data, timer: { running:false, elapsed:0 } };
-                if(!state.settings.theme) state.settings.theme = 'default';
+                // Handle legacy theme logic if id was different
+                if(!state.settings.theme || state.settings.theme === 'default') state.settings.theme = 'classic';
                 
                 const today = new Date().toISOString().split('T')[0];
                 if(state.history[today]) state.roundsToday = state.history[today].length;
@@ -843,7 +877,6 @@
             }
         }
 
-        // --- NEW: ADVANCED CRYPTO-STYLE VERIFIED REPORTING ---
         function shareProgress() {
             const today = new Date().toISOString().split('T')[0];
             const todayHistory = state.history[today] ||[];
@@ -852,7 +885,6 @@
             let manualCount = 0;
             let digitalMins = 0;
 
-            // Analytics Loop for distinction
             todayHistory.forEach(r => {
                 if(r.type === 'manual') {
                     manualCount++;
@@ -868,7 +900,6 @@
             const dateStr = new Date().toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'});
             const status = state.roundsToday >= state.target ? "✅ Target Achieved!" : "⏳ In Progress";
             
-            // Generate a cool verification code to make it look highly professional and cheat-proof
             const salt = state.roundsToday + today;
             const veriCode = btoa(salt).substring(0,6).toUpperCase();
 
@@ -884,7 +915,6 @@
                         `🔒 Veri-Code: ${veriCode}\n\n` +
                         `"Chant Hare Krishna and be happy!"`;
 
-            // Bridge support for Sketchware Native Share
             if(window.Android && window.Android.shareText) {
                 window.Android.shareText(txt);
                 return;
@@ -907,8 +937,8 @@
             
             if(isPlaying) {
                 aud.pause();
-                icon.className="fas fa-music text-lg text-gray-500 transition";
-                txt.className="text-[9px] text-gray-500";
+                icon.className="fas fa-music text-lg text-gray-400 transition";
+                txt.className="text-[9px] text-gray-400";
             } else {
                 aud.play().then(() => {
                     icon.className="fas fa-pause text-lg text-saffron transition animate-pulse shadow-glow";

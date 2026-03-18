@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Japa Sadhana - ISKCON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { saffron: '#FF9933', darkCard: '#1a1a1a' } } }
+        }
+    </script>
+    <style>
+        body { background-color: #000; color: white; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+        .app-layout { height: 100dvh; display: flex; flex-direction: column; overflow: hidden; width: 100%; max-width: 500px; margin: 0 auto; }
+        .tap-active { transform: scale(0.94); border-color: #FF9933 !important; box-shadow: 0 0 50px rgba(255, 153, 51, 0.7); }
+        .ring-progress { transition: stroke-dashoffset 0.1s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .toast-msg { position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: #1a1a1a; border: 1px solid #FF9933; padding: 12px 24px; border-radius: 30px; font-size: 0.85rem; z-index: 9999; transition: all 0.4s; opacity: 0; }
+        .toast-msg.show { bottom: 90px; opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        
+        <!-- HEADER -->
+        <header class="flex justify-between items-center px-5 py-4 border-b border-white/10 z-20">
+            <a href="index.html" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-saffron"><i class="fas fa-chevron-left"></i></a>
+            <h1 class="text-saffron font-bold text-sm tracking-widest">JAPA SADHANA</h1>
+            <button onclick="openSettings()" class="text-gray-300 hover:text-saffron"><i class="fas fa-cog text-xl"></i></button>
+        </header>
+
+        <!-- DASHBOARD -->
+        <main class="flex-1 flex flex-col items-center justify-center p-4">
+            <div class="grid grid-cols-2 gap-3 w-full mb-4 text-center">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <span class="text-[9px] text-gray-400 uppercase">Total Rounds</span>
+                    <div class="flex justify-center items-baseline gap-1 mt-1">
+                        <span id="totalRoundsDisplay" class="text-3xl font-bold text-white">0</span>
+                        <span id="targetDisplay" class="text-sm font-bold text-saffron">/ 16</span>
+                    </div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <button onclick="openManualRoundsModal()" class="w-full h-full text-saffron font-bold text-sm flex flex-col items-center justify-center">
+                        <i class="fas fa-plus mb-1"></i> Add Physical
+                    </button>
+                </div>
+            </div>
+
+            <!-- DIGITAL BEAD COUNTER -->
+            <div class="relative w-[280px] h-[280px] flex items-center justify-center mb-6">
+                <svg class="absolute inset-0 w-full h-full">
+                    <circle class="text-white/5" stroke-width="12" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
+                    <circle id="progressRing" class="ring-progress text-saffron" stroke-width="12" stroke-dasharray="785" stroke-dashoffset="785" stroke-linecap="round" stroke="currentColor" fill="transparent" r="125" cx="140" cy="140" />
+                </svg>
+                <button id="tapBtn" onmousedown="handleTap()" ontouchstart="handleTap(event)" 
+                    class="relative w-[215px] h-[215px] rounded-full border-[6px] border-[#222] flex flex-col items-center justify-center bg-[#111] transition-transform duration-75">
+                    <span id="beadCount" class="text-[4.5rem] font-bold text-white select-none">0</span>
+                    <span class="text-[10px] text-gray-300 tracking-[3px] select-none">MANTRA</span>
+                </button>
+            </div>
+            <div class="text-center">
+                <h3 class="text-saffron font-bold text-sm uppercase">Hare Krishna Hare Rama</h3>
+            </div>
+        </main>
+    </div>
+
+    <div id="sys_toast" class="toast-msg text-white">Notification</div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+        <div class="bg-darkCard w-full max-w-sm rounded-2xl p-6 relative">
+            <button onclick="closeModal('settingsModal')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times text-xl"></i></button>
+            <h2 class="text-saffron text-xl mb-6">Settings</h2>
+            
+            <div class="mb-4">
+                <label class="text-xs text-gray-400 block mb-2">Target Rounds</label>
+                <input type="number" id="customTargetInput" class="w-full bg-black border border-white/20 rounded-lg py-3 px-4 text-white outline-none">
+            </div>
+
+            <div class="mb-4">
+                <label class="text-xs text-gray-400 block mb-2">Remind me every</label>
+                <select id="intervalSelector" class="w-full bg-black border border-white/20 rounded-lg py-3 px-4 text-white outline-none">
+                    <option value="15000">15 Seconds (Test)</option>
+                    <option value="1800000">30 Minutes</option>
+                    <option value="3600000">1 Hour</option>
+                </select>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-sm text-gray-300">Enable Tracker & Alarm</span>
+                <input type="checkbox" id="notifyToggle" class="w-5 h-5 accent-saffron">
+            </div>
+            
+            <button onclick="saveSettings()" class="w-full bg-saffron text-black font-bold py-3.5 rounded-xl">Save</button>
+        </div>
+    </div>
+
+    <!-- MANUAL MODAL -->
+    <div id="manualModal" class="hidden fixed inset-0 z-[70] bg-black/90 flex items-center justify-center p-4">
+        <div class="bg-darkCard w-full max-w-xs rounded-2xl p-6 text-center relative">
+            <button onclick="closeModal('manualModal')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+            <h2 class="text-xl text-white font-bold mb-4">Add Physical Rounds</h2>
+            <input type="number" id="manualRoundInput" class="w-full bg-black border border-white/20 rounded-xl py-3 px-4 text-white mb-6">
+            <button onclick="saveManualRounds()" class="w-full bg-saffron text-black font-bold py-3 rounded-xl">Add Rounds</button>
+        </div>
+    </div>
+
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+    <script>
+        const MAX_BEADS = 108;
+        let state = { beads: 0, roundsToday: 0, manualRoundsToday: 0, target: 16, settings: { notify: false, interval: 1800000 } };
+
+        window.onload = () => { loadData(); updateUI(); };
+
+        function showToast(msg) {
+            const toast = document.getElementById('sys_toast');
+            toast.innerText = msg; toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 🔥 GOD LEVEL LOGIC - Resets interval automatically on every bead tap
+        function handleTap(e) {
+            if(e && e.type === 'touchstart') e.preventDefault(); 
+            state.beads++;
+            
+            const btn = document.getElementById('tapBtn');
+            btn.classList.add('tap-active');
+            setTimeout(() => btn.classList.remove('tap-active'), 80);
+            
+            try { document.getElementById('clickSound').play(); } catch(err){}
+            if(navigator.vibrate) navigator.vibrate(25);
+
+            if(state.beads >= MAX_BEADS) {
+                state.beads = 0;
+                state.roundsToday++;
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                showToast("Hare Krishna! Round Completed! 📿");
+                if(navigator.vibrate) navigator.vibrate([100,50,100]);
+            }
+            
+            saveData();
+            updateUI();
+            scheduleNativeReminder(); // Syncs Data and Resets Android Alarm timer!
+        }
+
+        function saveManualRounds() {
+            let val = parseInt(document.getElementById('manualRoundInput').value);
+            if(val > 0) {
+                state.manualRoundsToday += val;
+                saveData(); updateUI(); closeModal('manualModal');
+                scheduleNativeReminder(); 
+                showToast(`${val} Rounds Added!`);
+            }
+        }
+
+        // 🔥 SEND LIVE DATA TO ANDROID & RESTART TIMER
+        function scheduleNativeReminder() {
+            if(!state.settings.notify) return;
+            let total = state.roundsToday + state.manualRoundsToday;
+            let remaining = state.target - total;
+            let intervalMillis = parseInt(state.settings.interval);
+
+            if (typeof window.Android !== 'undefined') {
+                if(window.Android.syncJapaState) window.Android.syncJapaState(total, remaining, state.target);
+                if(window.Android.startJapaEngine && remaining > 0) window.Android.startJapaEngine(intervalMillis);
+            }
+        }
+
+        function saveSettings() {
+            state.target = parseInt(document.getElementById('customTargetInput').value) || 16;
+            state.settings.interval = document.getElementById('intervalSelector').value;
+            let wasNotifyOn = state.settings.notify;
+            state.settings.notify = document.getElementById('notifyToggle').checked;
+            
+            saveData(); updateUI(); closeModal('settingsModal');
+            showToast("Settings Saved!");
+
+            if(state.settings.notify) {
+                scheduleNativeReminder();
+            } else if (wasNotifyOn && typeof window.Android !== 'undefined' && window.Android.cancelJapaAlarm) {
+                window.Android.cancelJapaAlarm();
+            }
+        }
+
+        function updateUI() {
+            let total = state.roundsToday + state.manualRoundsToday;
+            document.getElementById('beadCount').innerText = state.beads;
+            document.getElementById('totalRoundsDisplay').innerText = total;
+            document.getElementById('targetDisplay').innerText = `/ ${state.target}`;
+            const offset = 785 - (state.beads / MAX_BEADS) * 785;
+            document.getElementById('progressRing').style.strokeDashoffset = offset;
+        }
+
+        function saveData() { localStorage.setItem('iskcon_japa_data', JSON.stringify(state)); }
+        function loadData() {
+            const raw = localStorage.getItem('iskcon_japa_data');
+            if(raw) {
+                const data = JSON.parse(raw);
+                state = { ...state, ...data };
+            }
+        }
+        function openModal(id) { 
+            document.getElementById(id).classList.remove('hidden'); 
+            if(id === 'settingsModal') {
+                document.getElementById('customTargetInput').value = state.target;
+                document.getElementById('intervalSelector').value = state.settings.interval;
+                document.getElementById('notifyToggle').checked = state.settings.notify;
+            }
+        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openSettings() { openModal('settingsModal'); }
+        function openManualRoundsModal() { openModal('manualModal'); }
+    </script>
+</body>
+</html>

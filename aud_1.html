@@ -368,22 +368,29 @@
         let flowerInterval;
         let currentSingerIdx = 0;
 
-        // --- NEW: THE BRIDGE (Native App se baat karne ke liye) ---
+        // --- NEW: STRICT BRIDGE FOR ANDROID NATIVE CONTROL ---
         function syncNativeNotification() {
-            // Check karega ki kya ye Sketchware app ke andar chal raha hai
-            if (window.AndroidApp && window.AndroidApp.updateNativeNotification) {
+            if (window.AndroidApp && typeof window.AndroidApp.updateNativeNotification === 'function') {
                 const title = document.getElementById('track-name').innerText;
                 const artist = document.getElementById('artist-name').innerText;
-                // Android app ko signal bhejega notification update karne ke liye
+                // Secure data push to Java Engine
                 window.AndroidApp.updateNativeNotification(title, artist, isPlaying);
             }
         }
 
-        // Functions jo Android app notification button dabane par call karega
-        window.playFromNative = function() { audio.play(); };
-        window.pauseFromNative = function() { audio.pause(); };
-        window.nextFromNative = function() { window.location.href = NEXT_SONG_PAGE; };
-        window.prevFromNative = function() { window.location.href = PREV_SONG_PAGE; };
+        // Functions exposed globally so Java can trigger them securely
+        window.playFromNative = function() { 
+            audio.play().catch(e => console.log("Audio play blocked by browser:", e)); 
+        };
+        window.pauseFromNative = function() { 
+            audio.pause(); 
+        };
+        window.nextFromNative = function() { 
+            window.location.href = NEXT_SONG_PAGE; 
+        };
+        window.prevFromNative = function() { 
+            window.location.href = PREV_SONG_PAGE; 
+        };
 
 
         // --- INIT ---
@@ -398,7 +405,7 @@
             document.getElementById('track-img').src = track.img;
             audio.src = track.audio;
             
-            // Gaana load hone par notification update
+            // Push state to Android Hardware Notification
             syncNativeNotification();
         }
 
@@ -414,7 +421,7 @@
             document.getElementById('icon-pause').style.display = 'block';
             startFlowers();
             
-            // Play hone par Native notification update (Pause button show karne ke liye)
+            // Update Native UI (Swap play icon to pause)
             syncNativeNotification();
         };
 
@@ -425,7 +432,7 @@
             document.getElementById('icon-pause').style.display = 'none';
             stopFlowers();
             
-            // Pause hone par Native notification update (Play button show karne ke liye)
+            // Update Native UI (Swap pause icon to play)
             syncNativeNotification();
         };
 
@@ -495,7 +502,7 @@
         function createFlower() {
             const f = document.createElement('div');
             f.className = 'flower';
-            f.innerHTML = ['🌸','🌼','🌷','🍃'][Math.floor(Math.random()*4)];
+            f.innerHTML =['🌸','🌼','🌷','🍃'][Math.floor(Math.random()*4)];
             f.style.left = Math.random()*100+'vw';
             f.style.fontSize = Math.random()*12+14+'px';
             f.style.animationDuration = Math.random()*4+4+'s';
